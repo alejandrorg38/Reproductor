@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AnadirCancion">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/b_archivoAC"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="46dp"
+                    android:background="@drawable/custom_button_blue"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="seleccionar"
+                    android:text="Seleccionar archivo"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_checkAC"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/tv_checkAC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/b_archivoAC"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_check" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/b_imagenAC"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/custom_button_blue"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:onClick="seleccionar"
+                android:text="Añadir imagen"
+                android:textAllCaps="false"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/iv_imagen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:visibility="invisible"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/tv_cancionAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Cancion:"
+                android:textColor="@color/white"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_cancionAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Nombre de la cancion"
+                android:inputType="textPersonName"
+                android:text=""
+                android:textColor="@color/white"
+                android:textColorHint="@color/lighter_blue"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/tv_albumAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Album:"
+                android:textColor="@color/white"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_albumAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Nombre del album"
+                android:inputType="textPersonName"
+                android:text=""
+                android:textColor="@color/white"
+                android:textColorHint="@color/lighter_blue"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/tv_artistaAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Artista"
+                android:textColor="@color/white"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_artistaAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Nombre del artista"
+                android:inputType="textPersonName"
+                android:text=""
+                android:textColor="@color/white"
+                android:textColorHint="@color/lighter_blue"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/tv_generoAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Genero:"
+                android:textColor="@color/white"
+                android:visibility="invisible"/>
+
+            <EditText
+                android:id="@+id/et_generoAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Genero musical"
+                android:inputType="textPersonName"
+                android:text=""
+                android:textColor="@color/white"
+                android:textColorHint="@color/lighter_blue"
+                android:visibility="invisible"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/b_subirAC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="25dp"
+                android:background="@drawable/custom_button_pink"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:onClick="subirArchivo"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:text="Subir archivo"
+                android:textAllCaps="false"
+                android:textSize="18dp"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

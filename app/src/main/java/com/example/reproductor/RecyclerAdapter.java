@@ -2,6 +2,7 @@ package com.example.reproductor;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +63,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         holder.tv_nCancionC.setText(cancionInfo.getNombre());
         holder.tv_artistaC.setText(cancionInfo.getArtista());
+
+        mainHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), Reproduccion.class);
+                view.getContext().startActivity(i);
+            }
+        });
+
     }
     @Override
     public int getItemCount() {

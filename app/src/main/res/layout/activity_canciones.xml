@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".Canciones">
 
+
+    <!-- Lista de canciones -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -44,12 +46,23 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingBottom="2dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintBottom_toTopOf="@+id/fl_reproductor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
         </androidx.recyclerview.widget.RecyclerView>
 
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fl_reproductor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.example.reproductor.MenuReproductor"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <!-- Menu de navegacion -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
@@ -61,5 +74,4 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/menu_navigation" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </RelativeLayout>

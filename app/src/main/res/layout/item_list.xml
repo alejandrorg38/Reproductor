@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    android_layout_width="match_parent"
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewC"
@@ -33,7 +32,7 @@
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 app:layout_constraintStart_toEndOf="@+id/iv_portadaC"
@@ -41,20 +40,22 @@
 
                 <TextView
                     android:id="@+id/tv_nCancionC"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="8dp"
                     android:text="Nombre de la cancion"
+                    android:maxLines="1"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/white" />
 
                 <TextView
                     android:id="@+id/tv_artistaC"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minLines="2"
                     android:text="Artista"
+                    android:maxLines="1"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/lighter_blue"
                     android:textStyle="italic" />

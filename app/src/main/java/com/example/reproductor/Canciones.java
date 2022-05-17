@@ -145,5 +145,8 @@ public class Canciones extends AppCompatActivity {
         return  super.onOptionsItemSelected(item);
     }
 
-
+    public void abrirDetalles(View view){
+        Intent i = new Intent(view.getContext(), DetallesReproductor.class);
+        view.getContext().startActivity(i);
+    }
 }

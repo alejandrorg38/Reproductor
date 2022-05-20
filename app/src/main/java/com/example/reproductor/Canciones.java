@@ -2,6 +2,8 @@ package com.example.reproductor;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +49,17 @@ public class Canciones extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canciones);
+
+        String extras = getIntent().getStringExtra("ocultarFragment");
+
+        if(extras!=null){
+            if(extras.equals("ocultarFragment")){
+
+                FragmentManager manager = getSupportFragmentManager();
+                Fragment f = manager.findFragmentById(R.id.fl_reproductor);
+                manager.beginTransaction().hide(f).commit();
+            }
+        }
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();

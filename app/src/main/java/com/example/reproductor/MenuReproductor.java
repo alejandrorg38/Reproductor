@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.bumptech.glide.load.engine.Resource;
+
 import java.util.ArrayList;
 
 /**
@@ -29,9 +31,11 @@ public class MenuReproductor extends Fragment {
     private String mParam2;
     private String cancionUrl="";
     private ImageButton ib_play;
-    private Boolean musicIsPlaying=false;
+    private Boolean musicIsPlaying=false, nuevaCancion=false;
     private ArrayList<String> listaUrl;
-    private int pos, n=0, nAnterior=0;
+    private int pos;
+
+    private ServicioMusica servicioMusica;
 
     public MenuReproductor() {
         // Required empty public constructor
@@ -72,28 +76,50 @@ public class MenuReproductor extends Fragment {
         // Inflate the layout for this fragment
          View view = inflater.inflate(R.layout.fragment_menu_reproductor, container, false);
 
+        ib_play = view.findViewById(R.id.ib_play);
+
+        if(musicIsPlaying){
+            ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
+        } else {
+            ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+        }
+
+        servicioMusica = new ServicioMusica(cancionUrl);
+
+        if(nuevaCancion){
+            servicioMusica.start();
+            ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
+            musicIsPlaying=true;
+            nuevaCancion=false;
+        }
+
+        Log.d("msgError", "URL --> " + cancionUrl);
 
          // Reproducir la musica al pulsar el boton play
-        ib_play = view.findViewById(R.id.ib_play);
-        ServicioMusica servicioMusica = new ServicioMusica(cancionUrl);
         ib_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(n>nAnterior){
+                if(nuevaCancion){
 
-                        if(n!=1) servicioMusica.stop();
-                        servicioMusica.playOrPause();
-                        nAnterior=n;
+                    servicioMusica.stop();
+                    servicioMusica.start();
+                    ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
+                    Log.d("msgError", "Nueva cancion");
+
                 }else {
 
-                    if (musicIsPlaying) {
+                    if (musicIsPlaying) { // Pausar
                         servicioMusica.playOrPause();
+                        ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
                         musicIsPlaying = false;
+                        Log.d("msgError", "Pausa");
 
-                    } else {
+                    } else { // Continuar
                         servicioMusica.resumeMusic();
+                        ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
                         musicIsPlaying = true;
+                        Log.d("msgError", "Continuar");
                     }
                 }
             }
@@ -108,6 +134,12 @@ public class MenuReproductor extends Fragment {
         this.pos=pos;
 
         cancionUrl = listaUrl.get(pos);
-        n++;
+        nuevaCancion = true;
+    }
+
+    public void onDestroy(){
+        super.onDestroy();
+
+        if(servicioMusica!=null) servicioMusica.stop();
     }
 }

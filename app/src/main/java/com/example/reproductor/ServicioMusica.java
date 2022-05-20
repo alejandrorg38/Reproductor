@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class ServicioMusica extends Service {
 
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayer mediaPlayer= new MediaPlayer();
     private String cancionUrl="";
     private int length = 0;
 
@@ -27,20 +27,37 @@ public class ServicioMusica extends Service {
     public void onCreate(){
         super.onCreate();
 
-        mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
 
     public void playOrPause() {
 
-        if(mediaPlayer.isPlaying()){
+        if(mediaPlayer!=null){
+            if(mediaPlayer.isPlaying()){
 
-            mediaPlayer.pause();
-            length=mediaPlayer.getCurrentPosition();
+                mediaPlayer.pause();
+                length=mediaPlayer.getCurrentPosition();
 
-        } else {
+            } else {
 
-            mediaPlayer.reset();
+                mediaPlayer.reset();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                try{
+                    mediaPlayer.setDataSource(cancionUrl);
+                    mediaPlayer.prepare();
+                    mediaPlayer.start();
+
+                } catch (IOException e) {
+                    Log.d("msgError", e.getMessage());
+                }
+            }
+        }
+    }
+
+    public void start(){
+
+        if(mediaPlayer!=null){
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
             try{
@@ -56,28 +73,28 @@ public class ServicioMusica extends Service {
 
     public void stop (){
 
-        try {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-
-        } catch (IllegalStateException e) {
-            Log.d("msgError", e.getMessage());
-        }
+            if(mediaPlayer!=null){
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
     }
 
     public void seekto(int duration){
-        if(mediaPlayer!= null)
-        {
-            mediaPlayer.seekTo(duration);}
+        if (mediaPlayer!=null){
+            if(mediaPlayer!= null) {
+                mediaPlayer.seekTo(duration);}
+        }
     }
 
     public void resumeMusic()
     {
-        if(mediaPlayer.isPlaying()==false)
-        {
-            mediaPlayer.seekTo(length);
-            mediaPlayer.start();
+        if (mediaPlayer!=null){
+            if(mediaPlayer.isPlaying()==false)
+            {
+                mediaPlayer.seekTo(length);
+                mediaPlayer.start();
+            }
         }
     }
 

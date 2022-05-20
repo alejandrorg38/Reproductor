@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -110,7 +111,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
                                 menuReproductor.setCancion(listaUrl,pos);
-                                activity.getSupportFragmentManager().beginTransaction().add(R.id.fl_reproductor, menuReproductor).commit();
+
+                                FragmentManager manager = activity.getSupportFragmentManager();
+                                Fragment f = manager.findFragmentById(R.id.fl_reproductor);
+                                manager.beginTransaction().replace(R.id.fl_reproductor, menuReproductor).commit();
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {

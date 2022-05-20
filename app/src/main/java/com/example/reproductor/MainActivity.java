@@ -181,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // Mensaje de alerta al salir
     public void onBackPressed() {
     }
 }

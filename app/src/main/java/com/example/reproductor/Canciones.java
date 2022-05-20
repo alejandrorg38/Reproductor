@@ -117,9 +117,6 @@ public class Canciones extends AppCompatActivity {
             }
         });
 
-
-        // Al tocar un item del recycleview
-
     }
 
     //Inicializacion del Action Bar Menu
@@ -148,5 +145,8 @@ public class Canciones extends AppCompatActivity {
     public void abrirDetalles(View view){
         Intent i = new Intent(view.getContext(), DetallesReproductor.class);
         view.getContext().startActivity(i);
+    }
+
+    public void onBackPressed() {
     }
 }

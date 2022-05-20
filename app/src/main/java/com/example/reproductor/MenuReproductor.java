@@ -4,9 +4,13 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +27,11 @@ public class MenuReproductor extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String cancionUrl="";
+    private ImageButton ib_play;
+    private Boolean musicIsPlaying=false;
+    private ArrayList<String> listaUrl;
+    private int pos, n=0, nAnterior=0;
 
     public MenuReproductor() {
         // Required empty public constructor
@@ -61,6 +70,44 @@ public class MenuReproductor extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu_reproductor, container, false);
+         View view = inflater.inflate(R.layout.fragment_menu_reproductor, container, false);
+
+
+         // Reproducir la musica al pulsar el boton play
+        ib_play = view.findViewById(R.id.ib_play);
+        ServicioMusica servicioMusica = new ServicioMusica(cancionUrl);
+        ib_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(n>nAnterior){
+
+                        if(n!=1) servicioMusica.stop();
+                        servicioMusica.playOrPause();
+                        nAnterior=n;
+                }else {
+
+                    if (musicIsPlaying) {
+                        servicioMusica.playOrPause();
+                        musicIsPlaying = false;
+
+                    } else {
+                        servicioMusica.resumeMusic();
+                        musicIsPlaying = true;
+                    }
+                }
+            }
+        });
+
+        return view;
+    }
+
+    public void setCancion(ArrayList<String> listaUrl, int pos) {
+
+        this.listaUrl=listaUrl;
+        this.pos=pos;
+
+        cancionUrl = listaUrl.get(pos);
+        n++;
     }
 }

@@ -68,4 +68,7 @@ public class Listas extends AppCompatActivity {
         }
         return  super.onOptionsItemSelected(item);
     }
+
+    public void onBackPressed() {
+    }
 }

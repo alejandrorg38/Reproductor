@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Canciones extends AppCompatActivity {
@@ -42,24 +44,23 @@ public class Canciones extends AppCompatActivity {
     private TextView et_sinCancionesC;
 
     private String userId;
-
-
+    private ServicioMusica servicioMusica;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canciones);
 
-        String extras = getIntent().getStringExtra("ocultarFragment");
+        servicioMusica = ServicioMusica.getInstance();
 
-        if(extras!=null){
-            if(extras.equals("ocultarFragment")){
+        if(servicioMusica.getCancionUrl().isEmpty()){
 
-                FragmentManager manager = getSupportFragmentManager();
-                Fragment f = manager.findFragmentById(R.id.fl_reproductor);
-                manager.beginTransaction().hide(f).commit();
-            }
+            FragmentManager manager = getSupportFragmentManager();
+            Fragment f = manager.findFragmentById(R.id.fl_reproductorC);
+            manager.beginTransaction().hide(f).commit();
         }
+
+
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();

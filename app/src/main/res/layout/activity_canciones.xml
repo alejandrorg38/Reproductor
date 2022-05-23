@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingBottom="2dp"
-            app:layout_constraintBottom_toTopOf="@+id/fl_reproductor"
+            app:layout_constraintBottom_toTopOf="@+id/fl_reproductorC"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -54,7 +54,7 @@
 
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fl_reproductor"
+            android:id="@+id/fl_reproductorC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"

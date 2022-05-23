@@ -68,27 +68,27 @@
                 android:background="@null"
                 android:onClick="reproducir"
                 android:src="@drawable/ic_play"
-                app:layout_constraintBottom_toBottomOf="@+id/imageButton2"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton2"
-                app:layout_constraintTop_toTopOf="@+id/imageButton2" />
+                app:layout_constraintBottom_toBottomOf="@+id/ib_next"
+                app:layout_constraintEnd_toStartOf="@+id/ib_next"
+                app:layout_constraintTop_toTopOf="@+id/ib_next" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
+                android:id="@+id/ib_next"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="20dp"
-                android:background="@null"
+                android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageButton
-                android:id="@+id/imageButton4"
+                android:id="@+id/ib_prev"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="25dp"
-                android:background="@null"
+                android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_previous"
                 app:layout_constraintBottom_toBottomOf="@+id/ib_play"
                 app:layout_constraintEnd_toStartOf="@+id/ib_play"

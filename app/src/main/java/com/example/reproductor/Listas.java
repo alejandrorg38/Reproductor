@@ -2,9 +2,12 @@ package com.example.reproductor;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,10 +15,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Listas extends AppCompatActivity {
 
+    private ServicioMusica servicioMusica;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listas);
+
+        servicioMusica = ServicioMusica.getInstance();
+
+        if(servicioMusica.getCancionUrl().isEmpty()){
+
+            FragmentManager manager = getSupportFragmentManager();
+            Fragment f = manager.findFragmentById(R.id.fl_reproductorL);
+            manager.beginTransaction().hide(f).commit();
+        }
 
         // Initialize and assign variable
         BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);

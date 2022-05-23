@@ -3,6 +3,8 @@ package com.example.reproductor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mReference;
     private String userId;
+    public static MenuReproductor menuReproductor;
 
     public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList) {
         this.mContext = mContext;
@@ -87,7 +91,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
 
-        MenuReproductor menuReproductor = new MenuReproductor();
+        menuReproductor = new MenuReproductor();
 
         // Reproducir cancion segun el item
         mainHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -110,11 +114,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 }
 
                                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                                menuReproductor.setCancion(listaUrl,pos);
+                                ServicioMusica servicioMusica = ServicioMusica.getInstance();
+                                servicioMusica.setCancionUrlPorPosicion(listaUrl,pos);
 
                                 FragmentManager manager = activity.getSupportFragmentManager();
-                                Fragment f = manager.findFragmentById(R.id.fl_reproductor);
-                                manager.beginTransaction().replace(R.id.fl_reproductor, menuReproductor).commit();
+                                manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {

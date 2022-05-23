@@ -18,13 +18,13 @@
             android:layout_height="wrap_content"
             android:text="Buscar"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/fl_reproductor"
+            app:layout_constraintBottom_toTopOf="@+id/fl_reproductorB"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fl_reproductor"
+            android:id="@+id/fl_reproductorB"
             android:name="com.example.reproductor.MenuReproductor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

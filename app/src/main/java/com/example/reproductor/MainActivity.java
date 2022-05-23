@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
     public void acceder(){
 
         Intent i = new Intent(this, Canciones.class);
-        i.putExtra("ocultarFragment", "ocultarFragment");
         startActivity(i);
         finish();
     }

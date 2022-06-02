@@ -9,6 +9,7 @@ import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText et_emailMA, et_contrasenaMA;
     private TextView tv_errorEmailMA, tv_errorContrasenaMA;
+    private long mLastClickTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,10 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d("msgError", "signInWithEmail:success");
+
+                                // Evita pulsar varias veces seguidas
+                                if (SystemClock.elapsedRealtime() - mLastClickTime < 1500) return;
+                                mLastClickTime = SystemClock.elapsedRealtime();
 
                                 acceder();
 

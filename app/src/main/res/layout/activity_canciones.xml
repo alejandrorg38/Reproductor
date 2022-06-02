@@ -29,7 +29,7 @@
             android:visibility="invisible"/>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progress_circular"
+            android:id="@+id/progress_circularB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

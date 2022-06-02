@@ -3,6 +3,7 @@ package com.example.reproductor;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
@@ -19,11 +20,19 @@ import java.util.concurrent.TimeUnit;
 public class ServicioMusica extends Service {
 
     private MediaPlayer mediaPlayer= new MediaPlayer();
+    private static ServicioMusica servicioMusica=null;
+
     private String cancionUrl="";
     private int length = 0;
-    private ArrayList<String> listaUrl;
     private int pos;
-    private static ServicioMusica servicioMusica=null;
+
+    private String cancion;
+    private String artista;
+    private String portada;
+
+    private ArrayList<CancionInfo> listaCanciones;
+    private CancionInfo cancionInfo;
+
 
     private ServicioMusica(){ }
 
@@ -34,39 +43,69 @@ public class ServicioMusica extends Service {
         return servicioMusica;
     }
 
-    public void setCancionUrlPorPosicion(ArrayList<String> listaUrl, int pos){
-        this.listaUrl = listaUrl;
+    public void setListaCanciones(ArrayList<CancionInfo> listaCanciones, CancionInfo cancionInfo){
+
+        this.listaCanciones=listaCanciones;
+        this.cancionInfo = cancionInfo;
+
+        this.cancion = cancionInfo.getNombre();
+        this.artista = cancionInfo.getArtista();
+        this.portada = cancionInfo.getPortadaUrl();
+        this.cancionUrl = cancionInfo.getCancionUrl();
+
+        this.pos = listaCanciones.indexOf(cancionInfo);
+
+        Log.d("msgError", "cancion ---> " + cancionUrl);
+
+        start();
+    }
+
+    public void alTerminarSiguiente(){
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                next();
+            }
+
+        });
+    }
+
+    public void setCancion(int pos){
+
         this.pos = pos;
 
-        cancionUrl = listaUrl.get(pos);
-        Log.d("msgError", "cancion ---> " + cancionUrl);
+        this.cancion = this.listaCanciones.get(pos).getNombre();
+        this.artista = this.listaCanciones.get(pos).getArtista();
+        this.cancionUrl = this.listaCanciones.get(pos).getCancionUrl();
+
+        if(!(this.listaCanciones.get(pos).getPortadaUrl()).toString().isEmpty()) {
+            this.portada = this.listaCanciones.get(pos).getPortadaUrl();
+        } else {
+            this.portada=null;
+        }
 
         start();
     }
 
     public void setCancionUrl(String cancionUrl){
         this.cancionUrl=cancionUrl;
-
         start();
     }
 
     public void onCreate(){
         super.onCreate();
-
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-
     }
 
     public void next(){
 
         int lastPos = this.pos;
 
-        if (lastPos==(this.listaUrl).size()-1){
+        if (lastPos==(this.listaCanciones).size()-1){
 
-            setCancionUrlPorPosicion(this.listaUrl, 0);
+            setCancion(0);
         } else {
-            setCancionUrlPorPosicion(this.listaUrl, lastPos+1);
+            setCancion(lastPos+1);
         }
     }
 
@@ -74,12 +113,19 @@ public class ServicioMusica extends Service {
 
         int lastPos = this.pos;
 
-        if (lastPos<1){
+        if(mediaPlayer.getCurrentPosition()<3000){
 
-            setCancionUrlPorPosicion(this.listaUrl, this.listaUrl.size()-1);
+            if (lastPos<1){
+
+                setCancion(this.listaCanciones.size()-1);
+            } else {
+                setCancion(lastPos-1);
+            }
+
         } else {
-            setCancionUrlPorPosicion(this.listaUrl, lastPos-1);
+            start();
         }
+
     }
 
     public void playOrPause() {
@@ -166,15 +212,72 @@ public class ServicioMusica extends Service {
             return false;
         }
     }
+    public int getDuracion(){
+        return mediaPlayer.getDuration();
+    }
 
-    public void updatePlayingTime(){
-        if (mediaPlayer != null){
-            int millis = mediaPlayer.getCurrentPosition();
-            long total_secs = TimeUnit.SECONDS.convert(millis, TimeUnit.MILLISECONDS);
-            long mins = TimeUnit.MINUTES.convert(total_secs, TimeUnit.SECONDS);
-            long secs = total_secs - (mins*60);
-            //MainActivity.textview3.setText(mins + ":" + secs + " / " + duration);
+    public String getStringDuracion(){
+
+        long duracion = mediaPlayer.getDuration();
+        String duracionString = "";
+        String segundosString;
+
+        int minutes = (int) (duracion % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (int) ((duracion % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+
+        if (seconds < 10) {
+            segundosString = "0" + seconds;
+        } else {
+            segundosString = "" + seconds;
         }
+
+        duracionString = duracionString + minutes + ":" + segundosString;
+        return duracionString;
+    }
+
+    public String getStringTiempo(){
+
+        long tiempo= mediaPlayer.getCurrentPosition();
+        String duracionString = "";
+        String segundosString;
+
+        int minutes = (int) (tiempo % (1000 * 60 * 60)) / (1000 * 60);
+        int seconds = (int) ((tiempo % (1000 * 60 * 60)) % (1000 * 60) / 1000);
+
+        if (seconds < 10) {
+            segundosString = "0" + seconds;
+        } else {
+            segundosString = "" + seconds;
+        }
+
+        duracionString = duracionString + minutes + ":" + segundosString;
+        return duracionString;
+    }
+
+    public int getPosition(){ return mediaPlayer.getCurrentPosition(); }
+
+    public String getCancion() {
+        return cancion;
+    }
+
+    public void setCancion(String cancion) {
+        this.cancion = cancion;
+    }
+
+    public String getArtista() {
+        return artista;
+    }
+
+    public void setArtista(String artista) {
+        this.artista = artista;
+    }
+
+    public String getPortada() {
+        return portada;
+    }
+
+    public void setPortada(String portada) {
+        this.portada = portada;
     }
 
     @Nullable

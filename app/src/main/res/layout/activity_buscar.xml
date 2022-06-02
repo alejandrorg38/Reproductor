@@ -9,19 +9,44 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp">
 
-
-        <TextView
-            android:id="@+id/textView2"
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_circularB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Buscar"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/fl_reproductorB"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            app:trackColor="@color/pink"
+            app:indicatorColor="@color/lighter_blue"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/rv_buscar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/custom_button_blue"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_buscar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/fl_reproductorB"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchView" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fl_reproductorB"
@@ -43,5 +68,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/menu_navigation" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

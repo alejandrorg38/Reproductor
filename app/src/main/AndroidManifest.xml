@@ -14,7 +14,8 @@
         <activity
             android:name=".DetallesReproductor"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".AnadirCancion"
             android:exported="true"

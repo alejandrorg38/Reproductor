@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,12 +27,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Canciones extends AppCompatActivity {
 
-    CircularProgressIndicator progressIndicator;
+    private CircularProgressIndicator progressIndicator;
 
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
@@ -51,24 +49,23 @@ public class Canciones extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canciones);
 
+        //Menu control de musica
         servicioMusica = ServicioMusica.getInstance();
-
         if(servicioMusica.getCancionUrl().isEmpty()){
-
             FragmentManager manager = getSupportFragmentManager();
             Fragment f = manager.findFragmentById(R.id.fl_reproductorC);
             manager.beginTransaction().hide(f).commit();
         }
-
-
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
 
         et_sinCancionesC = findViewById(R.id.et_sinCancionesC);
-        progressIndicator = findViewById(R.id.progress_circular);
+        progressIndicator = findViewById(R.id.progress_circularB);
 
+
+        // Rellenar RecyclerView
         recyclerView = findViewById(R.id.rv_canciones);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
@@ -80,27 +77,29 @@ public class Canciones extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                listaCanciones.clear();
+                if (snapshot.exists()) {
+                    listaCanciones.clear();
 
-                for (DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
-                    listaCanciones.add(cancionInfo);
-                }
-                recyclerAdapter = new RecyclerAdapter(getApplicationContext(),Canciones.this, (ArrayList<CancionInfo>) listaCanciones);
-                recyclerView.setAdapter(recyclerAdapter);
-                recyclerAdapter.notifyDataSetChanged();
-                progressIndicator.setVisibility(View.GONE);
+                    for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                        CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
+                        listaCanciones.add(cancionInfo);
+                    }
+                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(),Canciones.this, (ArrayList<CancionInfo>) listaCanciones);
+                    recyclerView.setAdapter(recyclerAdapter);
+                    recyclerAdapter.notifyDataSetChanged();
+                    progressIndicator.setVisibility(View.GONE);
 
-                for (CancionInfo i:listaCanciones) {
-                    Log.d("msgError", i.getNombre());
+                    for (CancionInfo i:listaCanciones) {
+                        Log.d("msgError", i.getNombre());
+                    }
+                    Log.d("msgError", "---");
                 }
-                Log.d("msgError", "---");
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(getApplicationContext(), "Archivo subido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error al cargar la musica", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -156,11 +155,6 @@ public class Canciones extends AppCompatActivity {
         return  super.onOptionsItemSelected(item);
     }
 
-    public void abrirDetalles(View view){
-        Intent i = new Intent(view.getContext(), DetallesReproductor.class);
-        view.getContext().startActivity(i);
-    }
 
-    public void onBackPressed() {
-    }
+    public void onBackPressed() { }
 }

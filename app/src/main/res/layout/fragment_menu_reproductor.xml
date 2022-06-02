@@ -6,57 +6,57 @@
     android:layout_height="wrap_content"
     tools:context=".MenuReproductor">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="5dp"
             android:background="@color/lighter_blue">
 
-            <ImageView
+        <ImageView
                 android:id="@+id/iv_portadaMR"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:onClick="abrirDetalles"
                 android:padding="5dp"
                 android:src="@drawable/placeholder"
-                android:onClick="abrirDetalles"
-                />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_expand" />
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="180dp"
                 android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_portadaMR"
                 app:layout_constraintStart_toEndOf="@+id/iv_portadaMR"
-                app:layout_constraintTop_toTopOf="parent"
-                android:orientation="vertical">
+                app:layout_constraintTop_toTopOf="@+id/iv_portadaMR">
 
                 <TextView
                     android:id="@+id/tv_nCancionMR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="Nombre de la cancion"
-                    android:textSize="14dp"
                     android:layout_marginTop="3dp"
+                    android:maxLines="1"
+                    android:onClick="abrirDetalles"
+                    android:text="Nombre de la cancion"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/black"
-                    android:onClick="abrirDetalles"/>
+                    android:textSize="14dp" />
 
                 <TextView
-                    android:id="@+id/tv_artistaC"
+                    android:id="@+id/tv_artistaMR"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:minLines="2"
+                    android:onClick="abrirDetalles"
                     android:text="Artista"
-                    android:textSize="12dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/background_blue2"
-                    android:textStyle="italic"
-                    android:onClick="abrirDetalles"/>
+                    android:textSize="12dp"
+                    android:textStyle="italic" />
 
             </LinearLayout>
 
@@ -64,7 +64,7 @@
                 android:id="@+id/ib_play"
                 android:layout_width="38dp"
                 android:layout_height="38dp"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="10dp"
                 android:background="@null"
                 android:onClick="reproducir"
                 android:src="@drawable/ic_play"
@@ -74,8 +74,8 @@
 
             <ImageButton
                 android:id="@+id/ib_next"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
                 android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_next"
@@ -85,9 +85,9 @@
 
             <ImageButton
                 android:id="@+id/ib_prev"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="25dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
                 android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_previous"
                 app:layout_constraintBottom_toBottomOf="@+id/ib_play"

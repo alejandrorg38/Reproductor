@@ -2,27 +2,81 @@ package com.example.reproductor;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class Buscar extends AppCompatActivity {
 
+    private CircularProgressIndicator progressIndicator;
     private ServicioMusica servicioMusica;
+    private ArrayList<CancionInfo> listaCanciones;
+    private RecyclerView recyclerView;
+    private SearchView searchView;
+    private RecyclerAdapter recyclerAdapter;
+    private EditText textoBusqueda;
+
+    private DatabaseReference databaseReference;
+    private FirebaseAuth mAuth;
+    private String userId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buscar);
 
-        servicioMusica = ServicioMusica.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        userId = user.getUid();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones");
 
+        searchView = findViewById(R.id.searchView);
+        textoBusqueda = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        textoBusqueda.setTextColor(getResources().getColor(R.color.black));
+        textoBusqueda.setHintTextColor(getResources().getColor(R.color.light_blue));
+        textoBusqueda.setHint("Buscar por nombre o artista...");
+        textoBusqueda.setBackgroundColor(getResources().getColor(R.color.lighter_blue));
+        searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setIconified(false);
+            }
+        });
+
+        progressIndicator = findViewById(R.id.progress_circularB);
+        recyclerView = findViewById(R.id.rv_buscar);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
+        listaCanciones = new ArrayList<>();
+
+        // Menu control de musica
+        servicioMusica = ServicioMusica.getInstance();
         if(servicioMusica.getCancionUrl().isEmpty()){
 
             FragmentManager manager = getSupportFragmentManager();
@@ -30,13 +84,53 @@ public class Buscar extends AppCompatActivity {
             manager.beginTransaction().hide(f).commit();
         }
 
-        // Initialize and assign variable
+        // Rellenar RecyclerView
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones").child(userId);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()) {
+                    listaCanciones.clear();
+
+                    for (DataSnapshot dataSnapshot: snapshot.getChildren()){
+                        CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
+                        listaCanciones.add(cancionInfo);
+                    }
+                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(),Buscar.this, (ArrayList<CancionInfo>) listaCanciones);
+                    recyclerView.setAdapter(recyclerAdapter);
+                    recyclerAdapter.notifyDataSetChanged();
+                    progressIndicator.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(), "Error al cargar la musica", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if(searchView.equals("")) {
+                    recyclerView.setVisibility(View.INVISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    buscar(s);
+                }
+                return true;
+            }
+        });
+
+        // Inicializacion del menu de navegacion inferior
         BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
-
-        // Set Home selected
         bottomNavigationView.setSelectedItemId(R.id.buscar);
-
-        // Perform item selected listener
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -82,6 +176,19 @@ public class Buscar extends AppCompatActivity {
         return  super.onOptionsItemSelected(item);
     }
 
-    public void onBackPressed() {
+    // Gestion de la busqueda con SearchView
+    private void buscar(String s) {
+
+        ArrayList<CancionInfo> lista = new ArrayList<>();
+
+        for(CancionInfo obj: listaCanciones){
+            if((obj.getNombre().toLowerCase().contains(s.toLowerCase()))||(obj.getArtista().toLowerCase().contains(s.toLowerCase()))){
+                lista.add(obj);
+            }
+        }
+        RecyclerAdapter adapter = new RecyclerAdapter(getApplicationContext(),Buscar.this, (ArrayList<CancionInfo>) lista);
+        recyclerView.setAdapter(adapter);
     }
+
+    public void onBackPressed() {}
 }

@@ -3,8 +3,7 @@ package com.example.reproductor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Parcelable;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,9 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
@@ -41,6 +36,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mReference;
     private String userId;
+    private long mLastClickTime;
     public static MenuReproductor menuReproductor;
 
     public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList) {
@@ -66,18 +62,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             cardViewC = itemView.findViewById(R.id.cardViewC);
             iv_portadaC = itemView.findViewById(R.id.iv_portadaC);
             tv_nCancionC = itemView.findViewById(R.id.tv_nCancionC);
-            tv_artistaC = itemView.findViewById(R.id.tv_artistaC);
+            tv_artistaC = itemView.findViewById(R.id.tv_artistaMR);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder mainHolder, int position) {
         ViewHolder holder = (ViewHolder) mainHolder;
+        holder.setIsRecyclable(false);
         final CancionInfo cancionInfo = mContentList.get(position);
 
         // Añadiendo los datos al recyclerView
         String imgUrl = cancionInfo.getPortadaUrl();
-        if (imgUrl != null && !imgUrl.isEmpty()) {
+        if (false&&imgUrl != null && !imgUrl.isEmpty()) { //Desactivado
             Glide.with(mContext)
                     .load(imgUrl)
                     .into(holder.iv_portadaC);
@@ -98,34 +95,56 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             public void onClick(View view) {
 
-                ArrayList<String> listaUrl = new ArrayList<>();
+                try {
+                    // La siguiente condicion evita que pulse varias veces seguidas
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
+                    mLastClickTime = SystemClock.elapsedRealtime();
 
-                int pos = mainHolder.getAdapterPosition();
+                    ArrayList<CancionInfo> listaCanciones = new ArrayList<>();
 
-                mReference.child("canciones").child(userId).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot snapshot) {
 
-                                for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                                    String cancionesUrl = dataSnapshot.child("cancionUrl").getValue(String.class);
+                    int pos = mainHolder.getAdapterPosition();
 
-                                    listaUrl.add(cancionesUrl);
-                                    Log.d("msgError", cancionesUrl);
-                                }
+                    mReference.child("canciones").child(userId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
 
-                                AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                                ServicioMusica servicioMusica = ServicioMusica.getInstance();
-                                servicioMusica.setCancionUrlPorPosicion(listaUrl,pos);
+                            //Recoger todas las canciones en listas
+                            for(DataSnapshot dataSnapshot: snapshot.getChildren()){
 
-                                FragmentManager manager = activity.getSupportFragmentManager();
-                                manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
+                                CancionInfo cancionInfo= new CancionInfo();
+                                cancionInfo.setCancionUrl(dataSnapshot.child("cancionUrl").getValue(String.class));
+                                cancionInfo.setNombre(dataSnapshot.child("nombre").getValue(String.class));
+                                cancionInfo.setArtista(dataSnapshot.child("artista").getValue(String.class));
+                                cancionInfo.setPortadaUrl(dataSnapshot.child("nombre").getValue(String.class));
+
+                                listaCanciones.add(cancionInfo);
                             }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
 
-                                Log.d("msgError", databaseError.getMessage());
-                            }
-                        });
+                            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+
+                            // Iniciar servicio de musica
+                            ServicioMusica servicioMusica = ServicioMusica.getInstance();
+                            servicioMusica.setListaCanciones(listaCanciones, cancionInfo);
+
+                            // Iniciar el fragmento con el menu para controlar la musica
+                            FragmentManager manager = activity.getSupportFragmentManager();
+                            if(activity.getClass()==Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
+                            if(activity.getClass()==Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
+                            if(activity.getClass()==Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
+
+                            menuReproductor.actualizarMenu();
+                            activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                            Log.d("msgError", databaseError.getMessage());
+                        }
+                    });
+                } catch (Exception e){
+                    Log.d("msgError", "Error al seleccionar cancion ----> "+e.getMessage());
+                }
             }
         });
 

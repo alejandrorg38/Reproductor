@@ -48,8 +48,8 @@ public class AnadirCancion extends AppCompatActivity {
     private EditText et_albumAC, et_artistaAC, et_generoAC, et_cancionAC;
     private Button b_subirAC, b_archivoAC, b_imagenAC;
     private ImageView iv_imagenAC;
-    private String userId, nombreImagen="";
-    private Uri uri;
+    private String userId, nombreImagen="", key;
+    private Uri uri, uriCancion, uriPortada;
 
     private CancionInfo cancionInfo;
 
@@ -109,7 +109,7 @@ public class AnadirCancion extends AppCompatActivity {
     }
 
     public void subirArchivo(View view){
-        if (uri != null) {
+        if (uriCancion != null) {
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Subiendo archivo...");
             progressDialog.show();
@@ -125,7 +125,7 @@ public class AnadirCancion extends AppCompatActivity {
                     .build();
 
             // Subir cancion
-            cancionRef.putFile(uri, metadata)
+            cancionRef.putFile(uriCancion, metadata)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -140,8 +140,12 @@ public class AnadirCancion extends AppCompatActivity {
                                 {
                                     String cancionUrlReference = downloadUrl.toString();
 
-                                    mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("cancionUrl").setValue(cancionUrlReference);
-                                    cancionInfo.setCancionUrl(cancionUrlReference);
+                                    try {
+                                        mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("cancionUrl").setValue(cancionUrlReference);
+                                        cancionInfo.setCancionUrl(cancionUrlReference);
+                                    } catch (Exception e) {
+                                        Log.d("msgError", "Error " + e.getMessage());
+                                    }
 
                                     Toast.makeText(getApplicationContext(), "Archivo subido", Toast.LENGTH_SHORT).show();
                                 }
@@ -167,14 +171,14 @@ public class AnadirCancion extends AppCompatActivity {
 
             // Subir imagen si exite
 
-            if (!nombreImagen.isEmpty()) {
+            if (uriPortada!=null) {
                 StorageReference imagenRef = storageRef.child((nombreImagen).substring(0, nombreImagen.length() - 4));
 
                 StorageMetadata metadataImagen = new StorageMetadata.Builder()
                         .setContentType("image/jpeg")
                         .build();
 
-                imagenRef.putFile(uri, metadataImagen)
+                imagenRef.putFile(uriPortada, metadataImagen)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -187,8 +191,12 @@ public class AnadirCancion extends AppCompatActivity {
                                         String imagenUrlReference = "";
                                         imagenUrlReference = downloadUrl.toString();
 
-                                        mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("portadaUrl").setValue(imagenUrlReference);
-                                        cancionInfo.setPortadaUrl(imagenUrlReference);
+                                        try {
+                                            mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("portadaUrl").setValue(imagenUrlReference);
+                                            cancionInfo.setPortadaUrl(imagenUrlReference);
+                                        } catch(Exception e){
+                                            Log.d("msgError", "Error " + e.getMessage());
+                                        }
                                     }
                                 });
                             }
@@ -203,7 +211,7 @@ public class AnadirCancion extends AppCompatActivity {
         } else {
 
             Toast.makeText(getApplicationContext(), "No hay ningun archivo seleccionado", Toast.LENGTH_SHORT).show();
-            Log.d("msgError", "No se encontro la uri - Uri: " + uri.toString());
+            Log.d("msgError", "No se encontro la uri - Uri: " + uriPortada.toString());
         }
     }
 
@@ -220,10 +228,11 @@ public class AnadirCancion extends AppCompatActivity {
 
         DatabaseReference cancionDataRef = mReference.child("canciones").child(userId).push();
         cancionInfo.setCancionUrl("");
+        if(uriPortada!=null) cancionInfo.setPortadaUrl("");
         cancionDataRef.setValue(cancionInfo);
 
         // Conseguir la key de la cancion
-        String key = cancionDataRef.getKey();
+        key = cancionDataRef.getKey();
         cancionInfo.setKey(key);
     }
 
@@ -241,7 +250,11 @@ public class AnadirCancion extends AppCompatActivity {
                 extension = getExtension(uri);
 
                 if (extension.equals("mp3")) {
-                    DocumentFile archivo = DocumentFile.fromSingleUri(this, uri);
+
+                    uriCancion = uri;
+                    uri = null;
+                    Log.d("msgError", uriCancion.toString());
+                    DocumentFile archivo = DocumentFile.fromSingleUri(this, uriCancion);
 
                     String nombreCancion = archivo.getName();
                     String nombreArchivo = archivo.getName();
@@ -258,7 +271,7 @@ public class AnadirCancion extends AppCompatActivity {
                     // Se recopilan los metadatos del archivo
                     try {
                         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                        mmr.setDataSource(this, uri);
+                        mmr.setDataSource(this, uriCancion);
 
                         et_artistaAC.setText(mmr.extractMetadata((MediaMetadataRetriever.METADATA_KEY_ARTIST)));
                         et_albumAC.setText(mmr.extractMetadata((MediaMetadataRetriever.METADATA_KEY_ALBUM)));
@@ -288,15 +301,19 @@ public class AnadirCancion extends AppCompatActivity {
                     b_imagenAC.setVisibility(View.VISIBLE);
                     b_subirAC.setVisibility(View.VISIBLE);
 
+
                 } else if (extension.equals("jpg")||extension.equals("png")){
 
-                    DocumentFile archivo = DocumentFile.fromSingleUri(this, uri);
+                    uriPortada = uri;
+                    uri = null;
+                    Log.d("msgError", uriPortada.toString());
+                    DocumentFile archivo = DocumentFile.fromSingleUri(this, uriPortada);
 
                     nombreImagen = archivo.getName();
 
                     try {
 
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uriPortada);
 
                         Bitmap imagenCancion = ThumbnailUtils.extractThumbnail(bitmap, 480, 480);
 
@@ -318,6 +335,7 @@ public class AnadirCancion extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
     //Devuelve la extension del archivo
     public String getExtension(Uri uri)

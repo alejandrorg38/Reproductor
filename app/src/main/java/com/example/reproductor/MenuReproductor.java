@@ -1,19 +1,30 @@
 package com.example.reproductor;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.Resource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +44,9 @@ public class MenuReproductor extends Fragment implements Serializable {
 
     private ServicioMusica servicioMusica;
     private ImageButton ib_play, ib_prev, ib_next;
+    private TextView tv_artistaMR, tv_nCancionMR;
+    private ImageView iv_portadaMR;
+    private long mLastClickTime;
 
     public MenuReproductor() {
         // Required empty public constructor
@@ -73,17 +87,17 @@ public class MenuReproductor extends Fragment implements Serializable {
         // Inflate the layout for this fragment
          View view = inflater.inflate(R.layout.fragment_menu_reproductor, container, false);
 
+        tv_nCancionMR = view.findViewById(R.id.tv_nCancionMR);
+        tv_artistaMR = view.findViewById(R.id.tv_artistaMR);
+
         ib_play = view.findViewById(R.id.ib_play);
         ib_prev = view.findViewById(R.id.ib_prev);
         ib_next = view.findViewById(R.id.ib_next);
+        iv_portadaMR = view.findViewById(R.id.iv_portadaMR);
 
         servicioMusica = ServicioMusica.getInstance();
 
-        if(servicioMusica.isPlaying()){
-            ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
-        } else {
-            ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
-        }
+        actualizarMenu();
 
 
         ib_play.setOnClickListener(new View.OnClickListener() {
@@ -92,11 +106,7 @@ public class MenuReproductor extends Fragment implements Serializable {
 
                 servicioMusica.playOrPause();
 
-                if(servicioMusica.isPlaying()){
-                    ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
-                } else {
-                    ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
-                }
+                actualizarMenu();
             }
         });
 
@@ -104,7 +114,13 @@ public class MenuReproductor extends Fragment implements Serializable {
             @Override
             public void onClick(View v) {
 
+                // Evita pulsar varias veces seguidas
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 servicioMusica.previous();
+                actualizarMenu();
+                ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
             }
         });
 
@@ -112,10 +128,61 @@ public class MenuReproductor extends Fragment implements Serializable {
             @Override
             public void onClick(View v) {
 
+                // Evita pulsar varias veces seguidas
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 servicioMusica.next();
+                actualizarMenu();
+                ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
+            }
+        });
+
+        tv_nCancionMR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirDetalles();
+            }
+        });
+
+        tv_artistaMR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirDetalles();
+            }
+        });
+
+        iv_portadaMR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirDetalles();
             }
         });
 
         return view;
+    }
+
+    public void actualizarMenu(){
+
+        if(servicioMusica!=null){
+            tv_nCancionMR.setText(servicioMusica.getCancion());
+            tv_artistaMR.setText(servicioMusica.getArtista());
+
+            if(servicioMusica.isPlaying()){
+                ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
+            } else {
+                ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+            }
+        }
+    }
+
+    public void abrirDetalles(){
+        Intent i = new Intent(getContext(), DetallesReproductor.class);
+        startActivity(i);
+    }
+
+    public void onResume() {
+        super.onResume();
+        actualizarMenu();
     }
 }

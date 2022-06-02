@@ -10,6 +10,19 @@ public class CancionInfo {
     private String cancionUrl;
     private String key;
 
+    @Override
+    public String toString() {
+        return "CancionInfo{" +
+                "nombre='" + nombre + '\'' +
+                ", artista='" + artista + '\'' +
+                ", album='" + album + '\'' +
+                ", genero='" + genero + '\'' +
+                ", portadaUrl='" + portadaUrl + '\'' +
+                ", cancionUrl='" + cancionUrl + '\'' +
+                ", key='" + key + '\'' +
+                '}';
+    }
+
     public String getKey() {
         return key;
     }

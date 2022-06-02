@@ -5,14 +5,21 @@
       <map>
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/custom_button_pink.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/custom_item_cancion.xml" value="0.33" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_eliminar.xml" value="0.3458333333333333" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_expand.xml" value="0.3140625" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_next.xml" value="0.3140625" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_nextDetalles.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_pauseDetalles.xml" value="0.3458333333333333" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_play.xml" value="0.3140625" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_playDetalles.xml" value="0.3458333333333333" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_play_circle.xml" value="0.37864583333333335" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_previous.xml" value="0.37864583333333335" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/drawable/ic_previousDetalles.xml" value="0.3458333333333333" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_anadir_cancion.xml" value="0.33" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_borrar_cuenta.xml" value="0.2375" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_buscar.xml" value="0.3625" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_canciones.xml" value="0.3625" />
+        <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_detalles_reproductor.xml" value="0.3296875" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_listas.xml" value="0.3625" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/activity_reproduccion.xml" value="0.3625" />
         <entry key="..\:/Users/Alex/AndroidStudioProjects/Reproductor/app/src/main/res/layout/fragment_menu_reproductor.xml" value="0.3625" />

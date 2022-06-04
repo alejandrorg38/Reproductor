@@ -16,15 +16,30 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
 
-  <ImageView
-      android:id="@+id/iv_portadaDR"
-      android:layout_width="200dp"
-      android:layout_height="200dp"
+  <androidx.cardview.widget.CardView
+      android:id="@+id/cardViewPortadaL"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:cardCornerRadius="10dp"
       app:layout_constraintBottom_toTopOf="@+id/seekBarDR"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"
-      android:src="@drawable/placeholder" />
+      app:layout_constraintTop_toTopOf="parent">
+
+      <ImageView
+          android:id="@+id/iv_portadaDR"
+          android:layout_width="200dp"
+          android:layout_height="200dp"
+          android:background="@color/background_blue2"
+
+          app:layout_constraintBottom_toTopOf="@+id/seekBarDR"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:src="@drawable/placeholder" />
+  </androidx.cardview.widget.CardView>
+
+
 
   <ImageButton
       android:id="@+id/iv_playDR"
@@ -85,7 +100,7 @@
       android:textStyle="bold"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/iv_portadaDR" />
+      app:layout_constraintTop_toBottomOf="@+id/cardViewPortadaL" />
 
   <TextView
       android:id="@+id/tv_artistaDR"

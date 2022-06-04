@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.SystemClock;
@@ -174,6 +175,12 @@ public class MenuReproductor extends Fragment implements Serializable {
                 ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
             } else {
                 ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_play));
+            }
+
+            if(servicioMusica.getPortada()!=null){
+                iv_portadaMR.setImageDrawable(servicioMusica.getPortada());
+            } else {
+                iv_portadaMR.setImageDrawable(ContextCompat.getDrawable(this.getContext(), R.drawable.placeholder));
             }
         }
     }

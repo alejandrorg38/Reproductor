@@ -176,7 +176,6 @@ public class DetallesReproductor extends AppCompatActivity {
         tv_cancionDR.setText(servicioMusica.getCancion());
         tv_artistaDR.setText(servicioMusica.getArtista());
 
-        Log.d("msgError", "portada ------> "+servicioMusica.getPortada());
         if(servicioMusica.getPortada()!=null){
             iv_portadaDR.setImageDrawable(servicioMusica.getPortada());
         } else {

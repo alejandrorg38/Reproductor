@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.reproductor.adapters.RecyclerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +40,7 @@ public class Buscar extends AppCompatActivity {
     private SearchView searchView;
     private RecyclerAdapter recyclerAdapter;
     private EditText textoBusqueda;
+    private TextView tv_sinCancionesB;
 
     private DatabaseReference databaseReference;
     private FirebaseAuth mAuth;
@@ -55,6 +57,7 @@ public class Buscar extends AppCompatActivity {
         userId = user.getUid();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones");
 
+        tv_sinCancionesB = findViewById(R.id.et_sinCancionesB);
         searchView = findViewById(R.id.searchView);
         textoBusqueda = (EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         textoBusqueda.setTextColor(getResources().getColor(R.color.black));
@@ -101,6 +104,9 @@ public class Buscar extends AppCompatActivity {
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);
+                } else {
+                    progressIndicator.setVisibility(View.GONE);
+                    tv_sinCancionesB.setVisibility(View.VISIBLE);
                 }
             }
 

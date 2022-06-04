@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.reproductor.adapters.RecyclerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,6 +79,7 @@ public class Canciones extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
+                    et_sinCancionesC.setVisibility(View.INVISIBLE);
                     listaCanciones.clear();
 
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()){
@@ -93,6 +95,9 @@ public class Canciones extends AppCompatActivity {
                         Log.d("msgError", i.getNombre());
                     }
                     Log.d("msgError", "---");
+                } else {
+                    progressIndicator.setVisibility(View.GONE);
+                    et_sinCancionesC.setVisibility(View.VISIBLE);
                 }
             }
 

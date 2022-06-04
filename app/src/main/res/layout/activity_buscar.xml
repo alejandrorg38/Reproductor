@@ -26,6 +26,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/et_sinCancionesB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todavia no tienes canciones...\nAñadelas en el menu superior"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@color/lighter_blue"
+            android:layout_marginBottom="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"/>
+
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchView"

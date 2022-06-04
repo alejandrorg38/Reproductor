@@ -1,21 +1,16 @@
 package com.example.reproductor;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class ServicioMusica extends Service {
 
@@ -148,7 +143,7 @@ public class ServicioMusica extends Service {
 
     public void start(){
 
-        if(mediaPlayer!=null){
+        if(mediaPlayer!=null&&!cancionUrl.isEmpty()){
             mediaPlayer.reset();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 

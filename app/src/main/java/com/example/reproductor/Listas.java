@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.reproductor.adapters.RecyclerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -93,6 +94,8 @@ public class Listas extends AppCompatActivity {
                         Log.d("msgError", i.getNombre());
                     }
                     Log.d("msgError", "---");
+                }else {
+                    progressIndicator.setVisibility(View.GONE);
                 }
             }
 

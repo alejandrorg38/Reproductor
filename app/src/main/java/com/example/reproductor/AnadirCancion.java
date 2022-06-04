@@ -27,7 +27,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -39,10 +38,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AnadirCancion extends AppCompatActivity {
-
-    StorageReference storageRef;
 
     private TextView tv_albumAC, tv_artistaAC, tv_generoAC, tv_cancionAC;
     private EditText et_albumAC, et_artistaAC, et_generoAC, et_cancionAC;
@@ -53,6 +52,7 @@ public class AnadirCancion extends AppCompatActivity {
 
     private CancionInfo cancionInfo;
 
+    private StorageReference storageRef;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mReference;
@@ -61,8 +61,6 @@ public class AnadirCancion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anadir_cancion);
-
-        storageRef = FirebaseStorage.getInstance().getReference();
 
         tv_cancionAC = findViewById(R.id.tv_cancionAC);
         tv_albumAC = findViewById(R.id.tv_albumAC);
@@ -80,6 +78,7 @@ public class AnadirCancion extends AppCompatActivity {
 
         iv_imagenAC = findViewById(R.id.iv_imagen);
 
+        storageRef = FirebaseStorage.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mReference = mFirebaseDatabase.getReference();
@@ -124,50 +123,7 @@ public class AnadirCancion extends AppCompatActivity {
                     .setCustomMetadata("Genero", (et_generoAC.getText()).toString())
                     .build();
 
-            // Subir cancion
-            cancionRef.putFile(uriCancion, metadata)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-
-                            guardarCancion();
-
-                            cancionRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
-                            {
-                                @Override
-                                public void onSuccess(Uri downloadUrl)
-                                {
-                                    String cancionUrlReference = downloadUrl.toString();
-
-                                    try {
-                                        mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("cancionUrl").setValue(cancionUrlReference);
-                                        cancionInfo.setCancionUrl(cancionUrlReference);
-                                    } catch (Exception e) {
-                                        Log.d("msgError", "Error " + e.getMessage());
-                                    }
-
-                                    Toast.makeText(getApplicationContext(), "Archivo subido", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "No se ha podido subir el archivo", Toast.LENGTH_SHORT).show();
-                            Log.d("msgError", "Error al subir el archivo: " + e.getMessage());
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                            double progreso = (100.0 * snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
-                            progressDialog.setMessage(String.valueOf((int)progreso)+"%");
-                        }
-                    });
-
+            guardarCancion();
 
             // Subir imagen si exite
 
@@ -192,7 +148,6 @@ public class AnadirCancion extends AppCompatActivity {
                                         imagenUrlReference = downloadUrl.toString();
 
                                         try {
-                                            mReference.child("canciones").child(userId).child(cancionInfo.getKey()).child("portadaUrl").setValue(imagenUrlReference);
                                             cancionInfo.setPortadaUrl(imagenUrlReference);
                                         } catch(Exception e){
                                             Log.d("msgError", "Error " + e.getMessage());
@@ -208,6 +163,65 @@ public class AnadirCancion extends AppCompatActivity {
                             }
                         });
             }
+
+
+            // Subir cancion
+            cancionRef.putFile(uriCancion, metadata)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+
+                            try {
+                                cancionRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                                {
+                                    @Override
+                                    public void onSuccess(Uri downloadUrl)
+                                    {
+                                        String cancionUrlReference = downloadUrl.toString();
+
+                                        try {
+                                            cancionInfo.setCancionUrl(cancionUrlReference);
+
+                                            Map<String, Object> cancionMap  = new HashMap<String, Object>();
+                                            cancionMap.put("nombre", cancionInfo.getNombre());
+                                            cancionMap.put("artista", cancionInfo.getArtista());
+                                            cancionMap.put("album", cancionInfo.getAlbum());
+                                            cancionMap.put("genero", cancionInfo.getGenero());
+                                            cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
+
+                                            String portadaUrl=cancionInfo.getPortadaUrl();
+                                            if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
+
+                                            mReference.child("canciones").child(userId).child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
+                                        } catch (Exception e) {
+                                            Log.d("msgError", "Error " + e.getMessage());
+                                        }
+
+                                        Toast.makeText(getApplicationContext(), "Archivo subido", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Log.d("msgError", "Error " + e.getMessage());;
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "No se ha podido subir el archivo", Toast.LENGTH_SHORT).show();
+                            Log.d("msgError", "Error al subir el archivo: " + e.getMessage());
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progreso = (100.0 * snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                            progressDialog.setMessage(String.valueOf((int)progreso)+"%");
+                        }
+                    });
+
         } else {
 
             Toast.makeText(getApplicationContext(), "No hay ningun archivo seleccionado", Toast.LENGTH_SHORT).show();
@@ -224,16 +238,16 @@ public class AnadirCancion extends AppCompatActivity {
         cancionInfo.setAlbum((et_albumAC.getText()).toString());
         cancionInfo.setGenero((et_generoAC.getText()).toString());
 
-        String id = mReference.push().getKey();
+        //String id = mReference.push().getKey();
 
-        DatabaseReference cancionDataRef = mReference.child("canciones").child(userId).push();
+        DatabaseReference cancionDataRef = mReference.child("canciones").child(userId).child(cancionInfo.getNombre());
         cancionInfo.setCancionUrl("");
         if(uriPortada!=null) cancionInfo.setPortadaUrl("");
-        cancionDataRef.setValue(cancionInfo);
+        //cancionDataRef.setValue(cancionInfo);
 
         // Conseguir la key de la cancion
-        key = cancionDataRef.getKey();
-        cancionInfo.setKey(key);
+        //key = cancionDataRef.getKey();
+        //cancionInfo.setKey(key);
     }
 
     //Selecciona uno de los archivos y muestra la informacion

@@ -1,4 +1,4 @@
-package com.example.reproductor;
+package com.example.reproductor.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,6 +17,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.reproductor.Buscar;
+import com.example.reproductor.CancionInfo;
+import com.example.reproductor.Canciones;
+import com.example.reproductor.DetallesReproductor;
+import com.example.reproductor.Listas;
+import com.example.reproductor.MenuReproductor;
+import com.example.reproductor.R;
+import com.example.reproductor.ServicioMusica;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +56,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cancion, parent, false);
         return new ViewHolder(view, viewType);
     }
 
@@ -74,7 +82,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         // Añadiendo los datos al recyclerView
         String imgUrl = cancionInfo.getPortadaUrl();
-        if (false&&imgUrl != null && !imgUrl.isEmpty()) { //Desactivado
+        if (imgUrl != null && !imgUrl.isEmpty()) {
             Glide.with(mContext)
                     .load(imgUrl)
                     .into(holder.iv_portadaC);
@@ -129,9 +137,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             // Iniciar el fragmento con el menu para controlar la musica
                             FragmentManager manager = activity.getSupportFragmentManager();
-                            if(activity.getClass()==Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
-                            if(activity.getClass()==Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
-                            if(activity.getClass()==Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
+                            if(activity.getClass()== Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
+                            if(activity.getClass()== Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
+                            if(activity.getClass()== Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
 
                             menuReproductor.actualizarMenu();
                             activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));

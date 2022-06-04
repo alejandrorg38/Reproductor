@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,32 +84,13 @@ public class DetallesReproductor extends AppCompatActivity {
         tv_artistaDR = findViewById(R.id.tv_artistaDR);
         seekBarDR = findViewById(R.id.seekBarDR);
 
-
-        // Video de fondo
         videoViewDR = findViewById(R.id.videoViewDR);
-        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video_background);
-        videoViewDR.setVideoURI(uri);
-        videoViewDR.start();
+        startVideo();
 
-        videoViewDR.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-                float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
-                float screenRatio = videoViewDR.getWidth() / (float)
-                        videoViewDR.getHeight();
-                float scaleX = videoRatio / screenRatio;
-                if (scaleX >= 1f) {
-                    videoViewDR.setScaleX(scaleX);
-                } else {
-                    videoViewDR.setScaleY(1f / 1.7f);
-                }
-            }
-        });
-
-        seekBarDR.setMax(servicioMusica.getDuracion()/1000);
+        servicioMusica.alTerminarSiguiente();
 
         // Actualizar Barra de progreso
+        seekBarDR.setMax(servicioMusica.getDuracion()/1000);
         mHandler= new Handler();
         DetallesReproductor.this.runOnUiThread(new Runnable(){
             @Override
@@ -128,8 +111,9 @@ public class DetallesReproductor extends AppCompatActivity {
         // Actualizar progreso de la musica
         seekBarDR.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {}
-
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(seekBar.getProgress()==0) actualizarInfo();
+            }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
 
@@ -168,6 +152,7 @@ public class DetallesReproductor extends AppCompatActivity {
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
         mLastClickTime = SystemClock.elapsedRealtime();
 
+        servicioMusica.setContext(getApplicationContext());
         servicioMusica.previous();
         iv_playDR.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_detalles));
         actualizarInfo();
@@ -179,33 +164,31 @@ public class DetallesReproductor extends AppCompatActivity {
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
         mLastClickTime = SystemClock.elapsedRealtime();
 
+        servicioMusica.setContext(getApplicationContext());
         servicioMusica.next();
         iv_playDR.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_detalles));
         actualizarInfo();
     }
 
     public void actualizarInfo(){
-
         tv_duracionDR.setText(String.valueOf(servicioMusica.getStringDuracion()));
 
         tv_cancionDR.setText(servicioMusica.getCancion());
         tv_artistaDR.setText(servicioMusica.getArtista());
 
-        String imgUrl = servicioMusica.getPortada();
-
-        if (imgUrl != null && !imgUrl.isEmpty()) {
-            try {
-                Drawable drawable = Glide.with(getApplicationContext())
-                        .load(imgUrl)
-                        .submit()
-                        .get();
-
-                iv_portadaDR.setImageDrawable(drawable);
-
-            } catch (Exception e) {
-                Log.d("msgError", e.getMessage());
-            }
+        Log.d("msgError", "portada ------> "+servicioMusica.getPortada());
+        if(servicioMusica.getPortada()!=null){
+            iv_portadaDR.setImageDrawable(servicioMusica.getPortada());
+        } else {
+            iv_portadaDR.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.placeholder));
         }
+
+        seekBarDR.setMax(servicioMusica.getDuracion()/1000);
+
+        int posicion=videoViewDR.getCurrentPosition();
+        videoViewDR.stopPlayback();
+        startVideo();
+        videoViewDR.seekTo(posicion+500);
     }
 
     public void borrarItem(View view){
@@ -264,9 +247,31 @@ public class DetallesReproductor extends AppCompatActivity {
                 .show();
     }
 
+    private void startVideo(){
+                Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video_background);
+                videoViewDR.setVideoURI(uri);
+                videoViewDR.start();
+
+                videoViewDR.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
+                        mp.setLooping(true);
+                        float videoRatio = mp.getVideoWidth() / (float) mp.getVideoHeight();
+                        float screenRatio = videoViewDR.getWidth() / (float)
+                                videoViewDR.getHeight();
+                        float scaleX = videoRatio / screenRatio;
+                        if (scaleX >= 1f) {
+                            videoViewDR.setScaleX(scaleX);
+                        } else {
+                            videoViewDR.setScaleY(1f / 1.7f);
+                        }
+                    }
+                });
+    }
+
     protected void onPause(){
         super.onPause();
-        videoViewDR.pause();
+        videoViewDR.stopPlayback();
     }
 
     protected void onResume(){

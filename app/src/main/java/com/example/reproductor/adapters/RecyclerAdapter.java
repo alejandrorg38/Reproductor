@@ -124,7 +124,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 cancionInfo.setCancionUrl(dataSnapshot.child("cancionUrl").getValue(String.class));
                                 cancionInfo.setNombre(dataSnapshot.child("nombre").getValue(String.class));
                                 cancionInfo.setArtista(dataSnapshot.child("artista").getValue(String.class));
-                                cancionInfo.setPortadaUrl(dataSnapshot.child("nombre").getValue(String.class));
+                                cancionInfo.setPortadaUrl(dataSnapshot.child("portadaUrl").getValue(String.class));
 
                                 listaCanciones.add(cancionInfo);
                             }
@@ -133,7 +133,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             // Iniciar servicio de musica
                             ServicioMusica servicioMusica = ServicioMusica.getInstance();
-                            servicioMusica.setListaCanciones(listaCanciones, cancionInfo);
+                            servicioMusica.setListaCanciones(listaCanciones, cancionInfo, mContext, pos);
 
                             // Iniciar el fragmento con el menu para controlar la musica
                             FragmentManager manager = activity.getSupportFragmentManager();

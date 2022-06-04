@@ -118,6 +118,7 @@ public class MenuReproductor extends Fragment implements Serializable {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
                 mLastClickTime = SystemClock.elapsedRealtime();
 
+                servicioMusica.setContext(view.getContext());
                 servicioMusica.previous();
                 actualizarMenu();
                 ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));
@@ -132,6 +133,7 @@ public class MenuReproductor extends Fragment implements Serializable {
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
                 mLastClickTime = SystemClock.elapsedRealtime();
 
+                servicioMusica.setContext(view.getContext());
                 servicioMusica.next();
                 actualizarMenu();
                 ib_play.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause));

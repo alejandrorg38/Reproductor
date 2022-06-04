@@ -1,13 +1,20 @@
 package com.example.reproductor;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,15 +25,17 @@ public class ServicioMusica extends Service {
     private static ServicioMusica servicioMusica=null;
 
     private String cancionUrl="";
+    private String portadaUrl="";
     private int length = 0;
     private int pos;
 
     private String cancion;
     private String artista;
-    private String portada;
+    private Drawable portada;
 
     private ArrayList<CancionInfo> listaCanciones;
     private CancionInfo cancionInfo;
+    private Context context;
 
 
     private ServicioMusica(){ }
@@ -38,21 +47,53 @@ public class ServicioMusica extends Service {
         return servicioMusica;
     }
 
-    public void setListaCanciones(ArrayList<CancionInfo> listaCanciones, CancionInfo cancionInfo){
+    public void setListaCanciones(ArrayList<CancionInfo> listaCanciones, CancionInfo cancionInfo, Context context, int pos){
+
+        this.context = context;
 
         this.listaCanciones=listaCanciones;
         this.cancionInfo = cancionInfo;
 
         this.cancion = cancionInfo.getNombre();
         this.artista = cancionInfo.getArtista();
-        this.portada = cancionInfo.getPortadaUrl();
         this.cancionUrl = cancionInfo.getCancionUrl();
+        this.portadaUrl=cancionInfo.getPortadaUrl();
 
-        this.pos = listaCanciones.indexOf(cancionInfo);
+        cargarPortada();
 
-        Log.d("msgError", "cancion ---> " + cancionUrl);
+        this.pos = pos;
+
+        Log.d("msgError", "index ---> " + listaCanciones.indexOf(cancionInfo));
 
         start();
+    }
+
+    public void cargarPortada(){
+
+        if (portadaUrl != null && !portadaUrl.isEmpty()) {
+
+            Thread mThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Drawable drawable = Glide.with(context)
+                                .load(portadaUrl)
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .skipMemoryCache(true)
+                                .submit()
+                                .get();
+
+                        portada = drawable;
+
+                    } catch (Exception e) {
+                        Log.d("msgError", "Error al cargar la imagen en ServicioMusica: "+e.getMessage());
+                    }
+                }
+            });
+            mThread.start();
+        } else {
+            portada= null;
+        }
     }
 
     public void alTerminarSiguiente(){
@@ -67,17 +108,19 @@ public class ServicioMusica extends Service {
 
     public void setCancion(int pos){
 
+        this.portada=null;
+        this.portadaUrl=null;
         this.pos = pos;
 
         this.cancion = this.listaCanciones.get(pos).getNombre();
         this.artista = this.listaCanciones.get(pos).getArtista();
         this.cancionUrl = this.listaCanciones.get(pos).getCancionUrl();
 
-        if(!(this.listaCanciones.get(pos).getPortadaUrl()).toString().isEmpty()) {
-            this.portada = this.listaCanciones.get(pos).getPortadaUrl();
-        } else {
-            this.portada=null;
+        if(this.listaCanciones.get(pos).getPortadaUrl()!=null){
+            this.portadaUrl = this.listaCanciones.get(pos).getPortadaUrl();
         }
+
+        cargarPortada();
 
         start();
     }
@@ -100,6 +143,7 @@ public class ServicioMusica extends Service {
 
             setCancion(0);
         } else {
+
             setCancion(lastPos+1);
         }
     }
@@ -120,7 +164,6 @@ public class ServicioMusica extends Service {
         } else {
             start();
         }
-
     }
 
     public void playOrPause() {
@@ -267,12 +310,16 @@ public class ServicioMusica extends Service {
         this.artista = artista;
     }
 
-    public String getPortada() {
+    public Drawable getPortada() {
         return portada;
     }
 
-    public void setPortada(String portada) {
+    public void setPortada(Drawable portada) {
         this.portada = portada;
+    }
+
+    public void setContext(Context context){
+        this.context = context;
     }
 
     @Nullable

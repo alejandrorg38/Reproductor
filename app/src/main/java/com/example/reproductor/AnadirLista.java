@@ -19,6 +19,8 @@ public class AnadirLista extends AppCompatActivity {
     private EditText et_nombreListaAL;
     private Button b_anadirAL;
 
+    private ListaInfo listaInfo;
+
     private StorageReference storageRef;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
@@ -41,8 +43,15 @@ public class AnadirLista extends AppCompatActivity {
         userId = user.getUid();
     }
 
-    private void crearLista(View view){
 
+    public void crearLista(View view){
 
+        listaInfo = new ListaInfo();
+        listaInfo.setNombre((et_nombreListaAL.getText()).toString());
+
+        DatabaseReference listaDataRef = mReference.child("listas").child(userId).child("id-"+listaInfo.getNombre());
+        listaDataRef.setValue(listaInfo);
+
+        finish();
     }
 }

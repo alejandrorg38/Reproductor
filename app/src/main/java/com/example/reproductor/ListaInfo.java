@@ -12,12 +12,4 @@ public class ListaInfo {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    public String getNumCanciones() {
-        return numCanciones;
-    }
-
-    public void setNumCanciones(String numCanciones) {
-        this.numCanciones = numCanciones;
-    }
 }

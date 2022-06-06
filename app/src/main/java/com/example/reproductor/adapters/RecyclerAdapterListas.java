@@ -13,26 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.reproductor.Buscar;
-import com.example.reproductor.CancionInfo;
-import com.example.reproductor.Canciones;
-import com.example.reproductor.DetallesReproductor;
 import com.example.reproductor.ListaCanciones;
 import com.example.reproductor.Listas;
-import com.example.reproductor.MenuReproductor;
 import com.example.reproductor.R;
-import com.example.reproductor.ServicioMusica;
 import com.example.reproductor.ListaInfo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -48,10 +38,17 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
     private String userId;
     private long mLastClickTime;
 
-    public RecyclerAdapterListas(Context applicationContext, Listas listas, ArrayList<ListaInfo> listadeListas) {
+    public RecyclerAdapterListas(Context mContext, Listas listas, ArrayList<ListaInfo> mContentList) {
         this.mContext = mContext;
         this.mActivity = mActivity;
         this.mContentList = mContentList;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista, parent, false);
+        return new RecyclerAdapterListas.ViewHolder(view, viewType);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,26 +59,16 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
 
             cardViewL = itemView.findViewById(R.id.cardViewL);
             tv_nListaL = itemView.findViewById(R.id.tv_nListaL);
-            tv_numCancionesL = itemView.findViewById(R.id.tv_numCancionesL);
         }
-    }
-
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista, parent, false);
-        return new RecyclerAdapter.ViewHolder(view, viewType);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder mainHolder, int position) {
         RecyclerAdapterListas.ViewHolder holder = (RecyclerAdapterListas.ViewHolder) mainHolder;
-        holder.setIsRecyclable(false);
         final ListaInfo listaInfo = mContentList.get(position);
 
         // Añadiendo los datos al recyclerView
         holder.tv_nListaL.setText(listaInfo.getNombre());
-        holder.tv_numCancionesL.setText(listaInfo.getNumCanciones());
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mReference = mFirebaseDatabase.getReference();

@@ -48,9 +48,7 @@
             android:paddingBottom="2dp"
             app:layout_constraintBottom_toTopOf="@+id/fl_reproductorC"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </androidx.recyclerview.widget.RecyclerView>
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
         <androidx.fragment.app.FragmentContainerView

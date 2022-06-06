@@ -6,4 +6,81 @@
     android:layout_height="match_parent"
     tools:context=".ListaCanciones">
 
+    <TextView
+        android:id="@+id/tv_nListaLC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Nombre de la lista"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ib_eliminarLC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_nListaLC"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_nListaLC"
+        app:srcCompat="@drawable/ic_eliminar" />
+
+    <TextView
+        android:id="@+id/tv_eliminarLC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="Eliminar"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/ib_eliminarLC"
+        app:layout_constraintEnd_toStartOf="@+id/ib_eliminarLC"
+        app:layout_constraintTop_toTopOf="@+id/ib_eliminarLC" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/fl_reproductorLC"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_nListaLC" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_circularLC"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        app:trackColor="@color/pink"
+        app:indicatorColor="@color/lighter_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fl_reproductorLC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigationLC"
+        app:layout_constraintStart_toStartOf="parent"
+        android:name="com.example.reproductor.MenuReproductor"/>
+
+
+    <!-- Menu de navegacion -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigationLC"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:itemBackground="@color/background_blue2"
+        app:itemIconTint="@drawable/selector"
+        app:itemTextColor="@drawable/selector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_navigation" />
 </androidx.constraintlayout.widget.ConstraintLayout>

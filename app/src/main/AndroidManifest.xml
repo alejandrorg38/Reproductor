@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reproductor">
         <activity
+            android:name=".ListaCanciones"
+            android:exported="true" />
+        <activity
             android:name=".AnadirLista"
             android:exported="true" />
         <activity

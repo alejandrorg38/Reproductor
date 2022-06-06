@@ -10,14 +10,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.reproductor.adapters.RecyclerAdapter;
+import com.example.reproductor.adapters.RecyclerAdapterListas;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,8 +38,8 @@ public class Listas extends AppCompatActivity {
     private DatabaseReference databaseReference;
 
     private RecyclerView recyclerView;
-    private ArrayList<CancionInfo> listaCanciones;
-    private RecyclerAdapter recyclerAdapter = null;
+    private ArrayList<ListaInfo> listadeListas;
+    private RecyclerAdapterListas recyclerAdapter = null;
     private String userId;
 
     private ImageButton ib_anadirL;
@@ -71,29 +70,25 @@ public class Listas extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
-        listaCanciones = new ArrayList<>();
+        listadeListas = new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones").child(userId);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("listas").child(userId);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
-                    listaCanciones.clear();
+                    listadeListas.clear();
 
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()){
-                        CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
-                        listaCanciones.add(cancionInfo);
+                        ListaInfo listaInfo = dataSnapshot.getValue(ListaInfo.class);
+                        listadeListas.add(listaInfo);
                     }
-                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(),Listas.this, (ArrayList<CancionInfo>) listaCanciones);
+                    recyclerAdapter = new RecyclerAdapterListas(getApplicationContext(),Listas.this, (ArrayList<ListaInfo>) listadeListas);
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);
 
-                    for (CancionInfo i:listaCanciones) {
-                        Log.d("msgError", i.getNombre());
-                    }
-                    Log.d("msgError", "---");
                 }else {
                     progressIndicator.setVisibility(View.GONE);
                 }
@@ -154,6 +149,10 @@ public class Listas extends AppCompatActivity {
                 break;
         }
         return  super.onOptionsItemSelected(item);
+    }
+
+    public void anadirLista(View view){
+        startActivity(new Intent(this, AnadirLista.class));
     }
 
     public void onBackPressed() {

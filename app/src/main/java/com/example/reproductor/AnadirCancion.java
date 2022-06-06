@@ -238,16 +238,9 @@ public class AnadirCancion extends AppCompatActivity {
         cancionInfo.setAlbum((et_albumAC.getText()).toString());
         cancionInfo.setGenero((et_generoAC.getText()).toString());
 
-        //String id = mReference.push().getKey();
-
         DatabaseReference cancionDataRef = mReference.child("canciones").child(userId).child(cancionInfo.getNombre());
         cancionInfo.setCancionUrl("");
         if(uriPortada!=null) cancionInfo.setPortadaUrl("");
-        //cancionDataRef.setValue(cancionInfo);
-
-        // Conseguir la key de la cancion
-        //key = cancionDataRef.getKey();
-        //cancionInfo.setKey(key);
     }
 
     //Selecciona uno de los archivos y muestra la informacion

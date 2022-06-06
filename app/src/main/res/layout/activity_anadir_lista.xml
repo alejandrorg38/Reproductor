@@ -10,7 +10,7 @@
         android:id="@+id/et_nombreListaAL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="150dp"
         android:ems="10"
         android:hint="Nombre"
         android:inputType="textPersonName"

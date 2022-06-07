@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.reproductor.adapters.RecyclerAdapter;
@@ -28,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class ListaCanciones extends AppCompatActivity {
@@ -40,11 +44,11 @@ public class ListaCanciones extends AppCompatActivity {
     private ArrayList<CancionInfo> listaCanciones;
 
     private RecyclerView recyclerView;
-    private ArrayList<ListaInfo> listadeListas;
-    private RecyclerAdapterListas recyclerAdapter = null;
+    private RecyclerAdapter recyclerAdapter = null;
     private String userId;
 
     private ImageButton ib_eliminarLC;
+    private TextView et_sinCancionesLC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +67,12 @@ public class ListaCanciones extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
 
+        et_sinCancionesLC = findViewById(R.id.et_sinCancionesLC);
         ib_eliminarLC = findViewById(R.id.ib_eliminarLC);
         progressIndicator = findViewById(R.id.progress_circularLC);
 
         // Rellenar RecyclerView
-        recyclerView = findViewById(R.id.rv_canciones);
+        recyclerView = findViewById(R.id.rv_lista_canciones);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
@@ -79,25 +84,21 @@ public class ListaCanciones extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
-                    //et_sinCancionesC.setVisibility(View.INVISIBLE);
+                    et_sinCancionesLC.setVisibility(View.INVISIBLE);
                     listaCanciones.clear();
 
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()){
                         CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
                         listaCanciones.add(cancionInfo);
                     }
-                    //recyclerAdapter = new RecyclerAdapter(getApplicationContext(),Canciones.this, (ArrayList<CancionInfo>) listaCanciones);
+                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(),ListaCanciones.this, (ArrayList<CancionInfo>) listaCanciones);
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);
 
-                    for (CancionInfo i:listaCanciones) {
-                        Log.d("msgError", i.getNombre());
-                    }
-                    Log.d("msgError", "---");
                 } else {
                     progressIndicator.setVisibility(View.GONE);
-                    //et_sinCancionesC.setVisibility(View.VISIBLE);
+                    et_sinCancionesLC.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -110,7 +111,7 @@ public class ListaCanciones extends AppCompatActivity {
 
         // Inicializacion del menu de navegacion inferior
         BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.canciones);
+        bottomNavigationView.setSelectedItemId(R.id.listas);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
 
@@ -125,10 +126,10 @@ public class ListaCanciones extends AppCompatActivity {
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.canciones:
+                        startActivity(new Intent(getApplicationContext(),Canciones.class));
+                        overridePendingTransition(0,0);
                         return true;
                     case R.id.listas:
-                        startActivity(new Intent(getApplicationContext(),Listas.class));
-                        overridePendingTransition(0,0);
                         return true;
                 }
                 return false;

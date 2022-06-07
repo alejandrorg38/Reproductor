@@ -114,7 +114,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                     int pos = mainHolder.getAdapterPosition();
 
-                    mReference.child("canciones").child(userId).addValueEventListener(new ValueEventListener() {
+                    mReference.child(userId).child("canciones").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
 

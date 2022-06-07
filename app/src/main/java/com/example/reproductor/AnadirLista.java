@@ -49,7 +49,7 @@ public class AnadirLista extends AppCompatActivity {
         listaInfo = new ListaInfo();
         listaInfo.setNombre((et_nombreListaAL.getText()).toString());
 
-        DatabaseReference listaDataRef = mReference.child("listas").child(userId).child("id-"+listaInfo.getNombre());
+        DatabaseReference listaDataRef = mReference.child(userId).child("listas").child("id-"+listaInfo.getNombre());
         listaDataRef.setValue(listaInfo);
 
         finish();

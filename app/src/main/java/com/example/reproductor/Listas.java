@@ -73,7 +73,7 @@ public class Listas extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         listadeListas = new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("listas").child(userId);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(userId).child("listas");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

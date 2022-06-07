@@ -55,7 +55,7 @@ public class Buscar extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(userId);
 
         tv_sinCancionesB = findViewById(R.id.et_sinCancionesB);
         searchView = findViewById(R.id.searchView);
@@ -88,7 +88,7 @@ public class Buscar extends AppCompatActivity {
         }
 
         // Rellenar RecyclerView
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones").child(userId);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(userId).child("canciones");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

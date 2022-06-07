@@ -78,7 +78,7 @@ public class ListaCanciones extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         listaCanciones = new ArrayList<>();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("canciones").child(userId);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(userId).child("canciones");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

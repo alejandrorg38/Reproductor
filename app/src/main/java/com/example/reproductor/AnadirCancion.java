@@ -193,7 +193,7 @@ public class AnadirCancion extends AppCompatActivity {
                                             String portadaUrl=cancionInfo.getPortadaUrl();
                                             if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
 
-                                            mReference.child("canciones").child(userId).child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
+                                            mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
                                         } catch (Exception e) {
                                             Log.d("msgError", "Error " + e.getMessage());
                                         }
@@ -238,7 +238,7 @@ public class AnadirCancion extends AppCompatActivity {
         cancionInfo.setAlbum((et_albumAC.getText()).toString());
         cancionInfo.setGenero((et_generoAC.getText()).toString());
 
-        DatabaseReference cancionDataRef = mReference.child("canciones").child(userId).child(cancionInfo.getNombre());
+        DatabaseReference cancionDataRef = mReference.child(userId).child("canciones").child(cancionInfo.getNombre());
         cancionInfo.setCancionUrl("");
         if(uriPortada!=null) cancionInfo.setPortadaUrl("");
     }

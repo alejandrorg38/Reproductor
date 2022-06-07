@@ -221,7 +221,7 @@ public class DetallesReproductor extends AppCompatActivity {
                         });
 
                         //Borrar de la base de datos
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("canciones").child(userId);
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userId).child("canciones");
                         Query query = ref.orderByChild("nombre").equalTo(nombre);
                         ValueEventListener listener = new ValueEventListener() {
                             @Override
@@ -229,6 +229,7 @@ public class DetallesReproductor extends AppCompatActivity {
                                 for(DataSnapshot ds : dataSnapshot.getChildren()){
 
                                     ds.getRef().removeValue();
+                                    finish();
                                 }
                             }
                             @Override

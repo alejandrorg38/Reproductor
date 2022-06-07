@@ -1,6 +1,7 @@
 package com.example.reproductor;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 
 import com.example.reproductor.adapters.RecyclerAdapter;
 import com.example.reproductor.adapters.RecyclerAdapterListas;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +32,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -48,7 +54,8 @@ public class ListaCanciones extends AppCompatActivity {
     private String userId;
 
     private ImageButton ib_eliminarLC;
-    private TextView et_sinCancionesLC;
+    private TextView tv_sinCancionesLC, tv_nListaLC;
+    String nombreLista;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +74,12 @@ public class ListaCanciones extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
 
-        et_sinCancionesLC = findViewById(R.id.et_sinCancionesLC);
+        Bundle bundle = getIntent().getExtras();
+        nombreLista = bundle.getString("nLista");
+        tv_nListaLC = findViewById(R.id.tv_nListaLC);
+        tv_nListaLC.setText(nombreLista);
+
+        tv_sinCancionesLC = findViewById(R.id.et_sinCancionesLC);
         ib_eliminarLC = findViewById(R.id.ib_eliminarLC);
         progressIndicator = findViewById(R.id.progress_circularLC);
 
@@ -84,7 +96,7 @@ public class ListaCanciones extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
-                    et_sinCancionesLC.setVisibility(View.INVISIBLE);
+                    tv_sinCancionesLC.setVisibility(View.INVISIBLE);
                     listaCanciones.clear();
 
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()){
@@ -98,7 +110,7 @@ public class ListaCanciones extends AppCompatActivity {
 
                 } else {
                     progressIndicator.setVisibility(View.GONE);
-                    et_sinCancionesLC.setVisibility(View.VISIBLE);
+                    tv_sinCancionesLC.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -135,5 +147,42 @@ public class ListaCanciones extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    public void eliminarLista(View view){
+
+        new AlertDialog.Builder(this, R.style.Base_Theme_Material3_Dark_Dialog)
+                .setTitle("Eliminar cancion")
+                .setMessage("¿Esta seguro de que desea borrar esta cancion? Esta accion no se podra deshacer.")
+                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userId).child("listas");
+                        Query query = ref.orderByChild("nombre").equalTo(nombreLista);
+                        ValueEventListener listener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot ds : dataSnapshot.getChildren()){
+
+                                    ds.getRef().removeValue();
+                                    startActivity(new Intent(view.getContext(), Listas.class));
+                                    finish();
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError e) {
+                                Log.d("msgError", "No se ha podido eliminar de Database"+e.getMessage());
+                            }
+                        };
+                        query.addValueEventListener(listener);
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {}
+                })
+                .show();
     }
 }

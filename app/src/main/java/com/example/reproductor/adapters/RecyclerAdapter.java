@@ -126,6 +126,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 cancionInfo.setNombre(dataSnapshot.child("nombre").getValue(String.class));
                                 cancionInfo.setArtista(dataSnapshot.child("artista").getValue(String.class));
                                 cancionInfo.setPortadaUrl(dataSnapshot.child("portadaUrl").getValue(String.class));
+                                cancionInfo.setFavorita(dataSnapshot.child("favorita").getValue(Boolean.class));
 
                                 listaCanciones.add(cancionInfo);
                             }

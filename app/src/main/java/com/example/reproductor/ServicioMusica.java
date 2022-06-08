@@ -32,6 +32,8 @@ public class ServicioMusica extends Service {
     private String cancion;
     private String artista;
     private Drawable portada;
+    private boolean favorita=false;
+    private ArrayList<String> listas;
 
     private ArrayList<CancionInfo> listaCanciones;
     private CancionInfo cancionInfo;
@@ -54,6 +56,7 @@ public class ServicioMusica extends Service {
         this.listaCanciones=listaCanciones;
         this.cancionInfo = cancionInfo;
 
+        this.favorita = cancionInfo.isFavorita();
         this.cancion = cancionInfo.getNombre();
         this.artista = cancionInfo.getArtista();
         this.cancionUrl = cancionInfo.getCancionUrl();
@@ -320,6 +323,22 @@ public class ServicioMusica extends Service {
 
     public void setContext(Context context){
         this.context = context;
+    }
+
+    public boolean isFavorita() {
+        return favorita;
+    }
+
+    public void setFavorita(boolean favorita) {
+        this.favorita = favorita;
+    }
+
+    public CancionInfo getCancionInfo() {
+        return cancionInfo;
+    }
+
+    public void setCancionInfo(CancionInfo cancionInfo) {
+        this.cancionInfo = cancionInfo;
     }
 
     @Nullable

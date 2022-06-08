@@ -41,12 +41,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class DetallesReproductor extends AppCompatActivity {
 
-    private ImageButton iv_prevDR, iv_playDR, iv_nextDR, iv_eliminarDR;
+    private ImageButton iv_prevDR, iv_playDR, ib_seleccionarListaDR;
     private ImageView iv_portadaDR;
     private TextView tv_cancionDR, tv_artistaDR, tv_tiempoDR, tv_duracionDR;
     private SeekBar seekBarDR;
@@ -57,15 +59,19 @@ public class DetallesReproductor extends AppCompatActivity {
 
     private Handler mHandler;
 
+    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mAuth;
     private StorageReference storageRef;
     private String userId;
+    private DatabaseReference mReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles_reproductor);
 
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mReference = mFirebaseDatabase.getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -73,10 +79,9 @@ public class DetallesReproductor extends AppCompatActivity {
 
         servicioMusica = ServicioMusica.getInstance();
 
+        ib_seleccionarListaDR = findViewById(R.id.ib_seleccionarListaDR);
         iv_prevDR = findViewById(R.id.iv_prevDR);
         iv_playDR = findViewById(R.id.iv_playDR);
-        iv_nextDR = findViewById(R.id.iv_nextDR);
-        iv_eliminarDR = findViewById(R.id.iv_eliminarDR);
         iv_portadaDR = findViewById(R.id.iv_portadaDR);
         tv_tiempoDR = findViewById(R.id.tv_tiempoDR);
         tv_duracionDR = findViewById(R.id.tv_duracionDR);
@@ -124,7 +129,6 @@ public class DetallesReproductor extends AppCompatActivity {
                 }
             }
         });
-
 
         actualizarInfo();
 
@@ -267,6 +271,27 @@ public class DetallesReproductor extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void selecccionarLista(View view){
+
+
+        startActivity(new Intent(this, SeleccionarLista.class));
+
+        CancionInfo cancionInfo = servicioMusica.getCancionInfo();
+        Map<String, Object> cancionMap  = new HashMap<String, Object>();
+        cancionMap.put("nombre", cancionInfo.getNombre());
+        cancionMap.put("artista", cancionInfo.getArtista());
+        cancionMap.put("album", cancionInfo.getAlbum());
+        cancionMap.put("genero", cancionInfo.getGenero());
+        cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
+        cancionMap.put("favorita", false);
+        cancionMap.put("listas", cancionInfo.getListas());
+
+        String portadaUrl=cancionInfo.getPortadaUrl();
+        if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
+
+        mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
     }
 
     protected void onPause(){

@@ -1,5 +1,7 @@
 package com.example.reproductor;
 
+import java.util.ArrayList;
+
 public class CancionInfo {
 
     private String nombre;
@@ -9,6 +11,8 @@ public class CancionInfo {
     private String portadaUrl;
     private String cancionUrl;
     private String key;
+    private boolean favorita;
+    private ArrayList<String> listas;
 
     @Override
     public String toString() {
@@ -77,5 +81,21 @@ public class CancionInfo {
 
     public void setCancionUrl(String cancionUrl) {
         this.cancionUrl = cancionUrl;
+    }
+
+    public boolean isFavorita() {
+        return favorita;
+    }
+
+    public void setFavorita(boolean favorita) {
+        this.favorita = favorita;
+    }
+
+    public ArrayList<String> getListas() {
+        return listas;
+    }
+
+    public void setListas(ArrayList<String> listas) {
+        this.listas = listas;
     }
 }

@@ -15,15 +15,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.reproductor.adapters.RecyclerAdapter;
-import com.example.reproductor.adapters.RecyclerAdapterListas;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,13 +30,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-public class ListaCanciones extends AppCompatActivity {
+public class ListaPersonalizada extends AppCompatActivity {
 
     private ServicioMusica servicioMusica;
 
@@ -103,7 +96,17 @@ public class ListaCanciones extends AppCompatActivity {
                         CancionInfo cancionInfo = dataSnapshot.getValue(CancionInfo.class);
                         listaCanciones.add(cancionInfo);
                     }
-                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(),ListaCanciones.this, (ArrayList<CancionInfo>) listaCanciones);
+
+                    //Filtrar RecyclerView segun la lista
+                    ArrayList<CancionInfo> lista = new ArrayList<>();
+
+                    for(CancionInfo obj:listaCanciones){
+                        for(String s: obj.getListas()){
+                            if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
+                        }
+                    }
+
+                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(), ListaPersonalizada.this, (ArrayList<CancionInfo>) lista);
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);

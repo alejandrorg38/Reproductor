@@ -2,11 +2,6 @@ package com.example.reproductor.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.SystemClock;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,23 +9,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reproductor.CancionInfo;
-import com.example.reproductor.ListaCanciones;
 import com.example.reproductor.ListaInfo;
-import com.example.reproductor.Listas;
 import com.example.reproductor.R;
 import com.example.reproductor.SeleccionarLista;
 import com.example.reproductor.ServicioMusica;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +89,7 @@ public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView
 
                 boolean repetida=false;
                 for(String s: cancionInfo.getListas()){
-                    if(lista.equals(lista)) repetida=true;
+                    if(s.equals(lista)) repetida=true;
                 }
 
                 if(repetida){

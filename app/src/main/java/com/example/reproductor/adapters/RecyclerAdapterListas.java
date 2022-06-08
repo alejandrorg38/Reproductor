@@ -12,11 +12,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.reproductor.CancionInfo;
-import com.example.reproductor.ListaCanciones;
+import com.example.reproductor.ListaPersonalizada;
 import com.example.reproductor.Listas;
 import com.example.reproductor.R;
 import com.example.reproductor.ListaInfo;
@@ -102,7 +100,7 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
 
                             AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
-                            Intent i = new Intent(view.getContext().getApplicationContext(), ListaCanciones.class);
+                            Intent i = new Intent(view.getContext().getApplicationContext(), ListaPersonalizada.class);
                             i.putExtra("nLista", listaDeListas.get(pos).getNombre());
                             activity.startActivity(i);
                         }

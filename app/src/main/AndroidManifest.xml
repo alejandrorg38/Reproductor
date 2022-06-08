@@ -11,10 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reproductor">
         <activity
+            android:name=".OpcionesLista"
+            android:exported="true" />
+        <activity
             android:name=".SeleccionarLista"
             android:exported="true" />
         <activity
-            android:name=".ListaCanciones"
+            android:name=".ListaPersonalizada"
             android:exported="true" />
         <activity
             android:name=".AnadirLista"

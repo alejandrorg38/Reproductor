@@ -21,7 +21,7 @@ import com.example.reproductor.Buscar;
 import com.example.reproductor.CancionInfo;
 import com.example.reproductor.Canciones;
 import com.example.reproductor.DetallesReproductor;
-import com.example.reproductor.ListaCanciones;
+import com.example.reproductor.ListaPersonalizada;
 import com.example.reproductor.Listas;
 import com.example.reproductor.MenuReproductor;
 import com.example.reproductor.R;
@@ -142,7 +142,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             if(activity.getClass()== Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
                             if(activity.getClass()== Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
                             if(activity.getClass()== Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
-                            if(activity.getClass()== ListaCanciones.class) manager.beginTransaction().replace(R.id.fl_reproductorLC, menuReproductor).commit();
+                            if(activity.getClass()== ListaPersonalizada.class) manager.beginTransaction().replace(R.id.fl_reproductorLC, menuReproductor).commit();
 
                             menuReproductor.actualizarMenu();
                             activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));

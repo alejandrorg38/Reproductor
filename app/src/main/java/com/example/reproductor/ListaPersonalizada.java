@@ -53,7 +53,7 @@ public class ListaPersonalizada extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_canciones);
+        setContentView(R.layout.activity_lista_personalizada);
 
         //Menu control de musica
         servicioMusica = ServicioMusica.getInstance();
@@ -152,40 +152,10 @@ public class ListaPersonalizada extends AppCompatActivity {
         });
     }
 
-    public void eliminarLista(View view){
-
-        new AlertDialog.Builder(this, R.style.Base_Theme_Material3_Dark_Dialog)
-                .setTitle("Eliminar cancion")
-                .setMessage("¿Esta seguro de que desea borrar esta cancion? Esta accion no se podra deshacer.")
-                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userId).child("listas");
-                        Query query = ref.orderByChild("nombre").equalTo(nombreLista);
-                        ValueEventListener listener = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot ds : dataSnapshot.getChildren()){
-
-                                    ds.getRef().removeValue();
-                                    startActivity(new Intent(view.getContext(), Listas.class));
-                                    finish();
-                                }
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError e) {
-                                Log.d("msgError", "No se ha podido eliminar de Database"+e.getMessage());
-                            }
-                        };
-                        query.addValueEventListener(listener);
-                    }
-                })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
-                })
-                .show();
+    public void opciones(View view){
+        Intent i = new Intent(getApplicationContext(),OpcionesLista.class);
+        i.putExtra("nLista", tv_nListaLC.getText().toString());
+        startActivity(i);
+        overridePendingTransition(0,0);
     }
 }

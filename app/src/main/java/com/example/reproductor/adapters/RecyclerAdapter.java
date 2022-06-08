@@ -24,6 +24,7 @@ import com.example.reproductor.DetallesReproductor;
 import com.example.reproductor.ListaPersonalizada;
 import com.example.reproductor.Listas;
 import com.example.reproductor.MenuReproductor;
+import com.example.reproductor.OpcionesLista;
 import com.example.reproductor.R;
 import com.example.reproductor.ServicioMusica;
 import com.google.firebase.auth.FirebaseAuth;
@@ -143,6 +144,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             if(activity.getClass()== Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
                             if(activity.getClass()== Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
                             if(activity.getClass()== ListaPersonalizada.class) manager.beginTransaction().replace(R.id.fl_reproductorLC, menuReproductor).commit();
+                            if(activity.getClass()== OpcionesLista.class) manager.beginTransaction().replace(R.id.fl_reproductorOL, menuReproductor).commit();
 
                             menuReproductor.actualizarMenu();
                             activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));

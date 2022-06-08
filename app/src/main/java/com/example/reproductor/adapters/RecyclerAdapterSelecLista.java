@@ -12,14 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reproductor.CancionInfo;
 import com.example.reproductor.ListaCanciones;
+import com.example.reproductor.ListaInfo;
 import com.example.reproductor.Listas;
 import com.example.reproductor.R;
-import com.example.reproductor.ListaInfo;
+import com.example.reproductor.SeleccionarLista;
+import com.example.reproductor.ServicioMusica;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,8 +30,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+
+    private ServicioMusica servicioMusica;
 
     private Context mContext;
     private Activity mActivity;
@@ -42,7 +47,7 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
     private String userId;
     private long mLastClickTime;
 
-    public RecyclerAdapterListas(Context mContext, Listas listas, ArrayList<ListaInfo> mContentList) {
+    public RecyclerAdapterSelecLista(Context mContext, SeleccionarLista listas, ArrayList<ListaInfo> mContentList) {
         this.mContext = mContext;
         this.mActivity = mActivity;
         this.mContentList = mContentList;
@@ -52,23 +57,23 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista, parent, false);
-        return new RecyclerAdapterListas.ViewHolder(view, viewType);
+        return new RecyclerAdapterSelecLista.ViewHolder(view, viewType);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView tv_nListaL;
         public ViewHolder(View itemView, int viewType) {
             super(itemView);
+
             tv_nListaL = itemView.findViewById(R.id.tv_nListaL);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder mainHolder, int position) {
-        RecyclerAdapterListas.ViewHolder holder = (RecyclerAdapterListas.ViewHolder) mainHolder;
+        RecyclerAdapterSelecLista.ViewHolder holder = (RecyclerAdapterSelecLista.ViewHolder) mainHolder;
         final ListaInfo listaInfo = mContentList.get(position);
 
-        // Añadiendo los datos al recyclerView
         holder.tv_nListaL.setText(listaInfo.getNombre());
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -82,40 +87,22 @@ public class RecyclerAdapterListas extends RecyclerView.Adapter<RecyclerView.Vie
 
             public void onClick(View view) {
 
-                try {
-                    // La siguiente condicion evita que pulse varias veces seguidas
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) return;
-                    mLastClickTime = SystemClock.elapsedRealtime();
-                    int pos = mainHolder.getAdapterPosition();
+                view.getContext().startActivity(new Intent(view.getContext(), SeleccionarLista.class));
 
-                    ArrayList<ListaInfo> listaDeListas = new ArrayList<>();
+                CancionInfo cancionInfo = servicioMusica.getCancionInfo();
+                Map<String, Object> cancionMap  = new HashMap<String, Object>();
+                cancionMap.put("nombre", cancionInfo.getNombre());
+                cancionMap.put("artista", cancionInfo.getArtista());
+                cancionMap.put("album", cancionInfo.getAlbum());
+                cancionMap.put("genero", cancionInfo.getGenero());
+                cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
+                cancionMap.put("favorita", cancionInfo.isFavorita());
+                //cancionMap.put("listas", cancionInfo.getListas());
 
-                    mReference.child(userId).child("listas").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
+                String portadaUrl=cancionInfo.getPortadaUrl();
+                if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
 
-                            for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                                ListaInfo listaInfo= new ListaInfo();
-                                listaInfo.setNombre(dataSnapshot.child("nombre").getValue(String.class));
-                                listaDeListas.add(listaInfo);
-                            }
-
-                            AppCompatActivity activity = (AppCompatActivity) view.getContext();
-
-                            Intent i = new Intent(view.getContext().getApplicationContext(), ListaCanciones.class);
-                            i.putExtra("nLista", listaDeListas.get(pos).getNombre());
-                            activity.startActivity(i);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.d("msgError", "Error al seleccionar la lista: "+error.getMessage());
-                        }
-                    });
-
-                } catch (Exception e){
-                    Log.d("msgError", "Error al seleccionar la lista: "+e.getMessage());
-                }
+                mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
             }
         });
     }

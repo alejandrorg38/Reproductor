@@ -275,23 +275,7 @@ public class DetallesReproductor extends AppCompatActivity {
 
     public void selecccionarLista(View view){
 
-
         startActivity(new Intent(this, SeleccionarLista.class));
-
-        CancionInfo cancionInfo = servicioMusica.getCancionInfo();
-        Map<String, Object> cancionMap  = new HashMap<String, Object>();
-        cancionMap.put("nombre", cancionInfo.getNombre());
-        cancionMap.put("artista", cancionInfo.getArtista());
-        cancionMap.put("album", cancionInfo.getAlbum());
-        cancionMap.put("genero", cancionInfo.getGenero());
-        cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
-        cancionMap.put("favorita", false);
-        cancionMap.put("listas", cancionInfo.getListas());
-
-        String portadaUrl=cancionInfo.getPortadaUrl();
-        if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
-
-        mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
     }
 
     protected void onPause(){

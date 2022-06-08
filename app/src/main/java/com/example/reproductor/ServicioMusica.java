@@ -140,32 +140,36 @@ public class ServicioMusica extends Service {
 
     public void next(){
 
-        int lastPos = this.pos;
+        if(servicioMusica!=null||listaCanciones!=null){
+            int lastPos = this.pos;
 
-        if (lastPos==(this.listaCanciones).size()-1){
+            if (lastPos==(this.listaCanciones).size()-1){
 
-            setCancion(0);
-        } else {
+                setCancion(0);
+            } else {
 
-            setCancion(lastPos+1);
+                setCancion(lastPos+1);
+            }
         }
     }
 
     public void previous(){
 
-        int lastPos = this.pos;
+        if(servicioMusica!=null||listaCanciones!=null){
+            int lastPos = this.pos;
 
-        if(mediaPlayer.getCurrentPosition()<3000){
+            if(mediaPlayer.getCurrentPosition()<3000){
 
-            if (lastPos<1){
+                if (lastPos<1){
 
-                setCancion(this.listaCanciones.size()-1);
+                    setCancion(this.listaCanciones.size()-1);
+                } else {
+                    setCancion(lastPos-1);
+                }
+
             } else {
-                setCancion(lastPos-1);
+                start();
             }
-
-        } else {
-            start();
         }
     }
 

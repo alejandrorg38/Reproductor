@@ -103,7 +103,7 @@ public class SeleccionarLista extends AppCompatActivity {
             cancionMap.put("genero", cancionInfo.getGenero());
             cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
             cancionMap.put("favorita", cancionInfo.isFavorita());
-            //cancionMap.put("listas", cancionInfo.getListas());
+            cancionMap.put("listas", cancionInfo.getListas());
 
             String portadaUrl=cancionInfo.getPortadaUrl();
             if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);

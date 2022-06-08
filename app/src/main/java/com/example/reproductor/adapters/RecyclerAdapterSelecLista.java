@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +60,9 @@ public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lista, parent, false);
+
+        servicioMusica=ServicioMusica.getInstance();
+
         return new RecyclerAdapterSelecLista.ViewHolder(view, viewType);
     }
 
@@ -73,7 +79,7 @@ public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder mainHolder, int position) {
         RecyclerAdapterSelecLista.ViewHolder holder = (RecyclerAdapterSelecLista.ViewHolder) mainHolder;
         final ListaInfo listaInfo = mContentList.get(position);
-
+        holder.setIsRecyclable(false);
         holder.tv_nListaL.setText(listaInfo.getNombre());
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -87,22 +93,39 @@ public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView
 
             public void onClick(View view) {
 
-                view.getContext().startActivity(new Intent(view.getContext(), SeleccionarLista.class));
+                TextView tv_nListaL =  view.findViewById(R.id.tv_nListaL);
+                String lista = tv_nListaL.getText().toString();
 
                 CancionInfo cancionInfo = servicioMusica.getCancionInfo();
-                Map<String, Object> cancionMap  = new HashMap<String, Object>();
-                cancionMap.put("nombre", cancionInfo.getNombre());
-                cancionMap.put("artista", cancionInfo.getArtista());
-                cancionMap.put("album", cancionInfo.getAlbum());
-                cancionMap.put("genero", cancionInfo.getGenero());
-                cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
-                cancionMap.put("favorita", cancionInfo.isFavorita());
-                //cancionMap.put("listas", cancionInfo.getListas());
 
-                String portadaUrl=cancionInfo.getPortadaUrl();
-                if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
+                boolean repetida=false;
+                for(String s: cancionInfo.getListas()){
+                    if(lista.equals(lista)) repetida=true;
+                }
 
-                mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
+                if(repetida){
+
+                    Toast.makeText(view.getContext().getApplicationContext(), "La cancion ya se encuentra en esa lista", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    cancionInfo.setLista(lista);
+
+                    Map<String, Object> cancionMap  = new HashMap<String, Object>();
+                    cancionMap.put("nombre", cancionInfo.getNombre());
+                    cancionMap.put("artista", cancionInfo.getArtista());
+                    cancionMap.put("album", cancionInfo.getAlbum());
+                    cancionMap.put("genero", cancionInfo.getGenero());
+                    cancionMap.put("cancionUrl", cancionInfo.getCancionUrl());
+                    cancionMap.put("favorita", cancionInfo.isFavorita());
+                    cancionMap.put("listas", cancionInfo.getListas());
+
+                    String portadaUrl=cancionInfo.getPortadaUrl();
+                    if(portadaUrl!=null)cancionMap.put("portadaUrl", portadaUrl);
+
+                    mReference.child(userId).child("canciones").child("id-"+cancionInfo.getNombre()).updateChildren(cancionMap);
+
+                    Toast.makeText(view.getContext().getApplicationContext(), "Se ha añadido la cancion a "+lista, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

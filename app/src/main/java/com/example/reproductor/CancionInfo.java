@@ -1,5 +1,8 @@
 package com.example.reproductor;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class CancionInfo {
@@ -12,7 +15,7 @@ public class CancionInfo {
     private String cancionUrl;
     private String key;
     private boolean favorita;
-    private ArrayList<String> listas;
+    private ArrayList<String> listas = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -98,4 +101,8 @@ public class CancionInfo {
     public void setListas(ArrayList<String> listas) {
         this.listas = listas;
     }
+
+    public void setLista(String lista) {
+        Log.d("msgError", "------>"+lista);
+        this.listas.add(lista); }
 }

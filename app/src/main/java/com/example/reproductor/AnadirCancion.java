@@ -38,6 +38,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -241,7 +242,9 @@ public class AnadirCancion extends AppCompatActivity {
         cancionInfo.setAlbum((et_albumAC.getText()).toString());
         cancionInfo.setGenero((et_generoAC.getText()).toString());
         cancionInfo.setFavorita(false);
-        cancionInfo.setListas(new ArrayList<String>());
+        ArrayList<String> lista = new ArrayList<String>();
+        lista.add("");
+        cancionInfo.setListas(lista);
 
         DatabaseReference cancionDataRef = mReference.child(userId).child("canciones").child(cancionInfo.getNombre());
         cancionInfo.setCancionUrl("");

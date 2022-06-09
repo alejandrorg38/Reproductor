@@ -43,7 +43,7 @@ public class OpcionesLista extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter = null;
 
-    private ImageButton ib_atrasOL, ib_eliminarOL;
+    private ImageButton ib_eliminarOL;
     private TextView tv_sinCancionesOL, tv_nListaOL;
     String nombreLista, userId;
 
@@ -62,7 +62,6 @@ public class OpcionesLista extends AppCompatActivity {
         tv_nListaOL.setText(nombreLista);
         tv_sinCancionesOL = findViewById(R.id.et_sinCancionesOL);
         progressIndicator = findViewById(R.id.progress_circularOL);
-        ib_atrasOL = findViewById(R.id.ib_atrasOL);
         ib_eliminarOL = findViewById(R.id.ib_eliminarOL);
 
         // Rellenar RecyclerView
@@ -91,11 +90,13 @@ public class OpcionesLista extends AppCompatActivity {
 
                     for(CancionInfo obj:listaCanciones){
                         for(String s: obj.getListas()){
-                            if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
+                            if (s!=null) {
+                                if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
+                            }
                         }
                     }
 
-                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(), OpcionesLista.this, (ArrayList<CancionInfo>) lista);
+                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(), OpcionesLista.this, (ArrayList<CancionInfo>) lista, nombreLista);
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);
@@ -134,6 +135,8 @@ public class OpcionesLista extends AppCompatActivity {
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.listas:
+                        startActivity(new Intent(getApplicationContext(),Listas.class));
+                        overridePendingTransition(0,0);
                         return true;
                 }
                 return false;
@@ -159,7 +162,6 @@ public class OpcionesLista extends AppCompatActivity {
                                 for(DataSnapshot ds : dataSnapshot.getChildren()){
 
                                     ds.getRef().removeValue();
-                                    startActivity(new Intent(view.getContext(), Listas.class));
                                     finish();
                                 }
                             }
@@ -178,7 +180,7 @@ public class OpcionesLista extends AppCompatActivity {
                 .show();
     }
 
-    public void atras(View view){
+    public void onBackPressed(){
         finish();
         overridePendingTransition(0,0);
     }

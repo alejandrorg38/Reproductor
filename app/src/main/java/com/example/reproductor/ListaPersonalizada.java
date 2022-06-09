@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.os.ResultReceiver;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,7 +103,9 @@ public class ListaPersonalizada extends AppCompatActivity {
 
                     for(CancionInfo obj:listaCanciones){
                         for(String s: obj.getListas()){
-                            if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
+                            if (s!=null) {
+                                if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
+                            }
                         }
                     }
 
@@ -145,6 +148,8 @@ public class ListaPersonalizada extends AppCompatActivity {
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.listas:
+                        startActivity(new Intent(getApplicationContext(),Listas.class));
+                        overridePendingTransition(0,0);
                         return true;
                 }
                 return false;
@@ -155,7 +160,9 @@ public class ListaPersonalizada extends AppCompatActivity {
     public void opciones(View view){
         Intent i = new Intent(getApplicationContext(),OpcionesLista.class);
         i.putExtra("nLista", tv_nListaLC.getText().toString());
+
         startActivity(i);
         overridePendingTransition(0,0);
+        finish();
     }
 }

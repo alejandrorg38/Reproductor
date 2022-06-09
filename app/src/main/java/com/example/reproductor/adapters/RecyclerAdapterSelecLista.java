@@ -89,7 +89,9 @@ public class RecyclerAdapterSelecLista extends RecyclerView.Adapter<RecyclerView
 
                 boolean repetida=false;
                 for(String s: cancionInfo.getListas()){
-                    if(s.equals(lista)) repetida=true;
+                    if (s!=null) {
+                        if(s.equals(lista)) repetida=true;
+                    }
                 }
 
                 if(repetida){

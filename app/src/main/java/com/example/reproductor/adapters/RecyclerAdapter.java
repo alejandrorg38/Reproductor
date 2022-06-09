@@ -33,6 +33,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -45,14 +46,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mReference;
-    private String userId;
+    private String userId, nLista;
     private long mLastClickTime;
     public static MenuReproductor menuReproductor;
+    private boolean eliminar = false;
 
     public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList) {
         this.mContext = mContext;
         this.mActivity = mActivity;
         this.mContentList = mContentList;
+    }
+
+    public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList, String nLista) {
+        this.mContext = mContext;
+        this.mActivity = mActivity;
+        this.mContentList = mContentList;
+        this.nLista=nLista;
+        this.eliminar = true;
     }
 
     @NonNull
@@ -134,20 +144,32 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
-                            // Iniciar servicio de musica
-                            ServicioMusica servicioMusica = ServicioMusica.getInstance();
-                            servicioMusica.setListaCanciones(listaCanciones, cancionInfo, mContext, pos);
+                            if (!eliminar) {
+                                // Iniciar servicio de musica
+                                ServicioMusica servicioMusica = ServicioMusica.getInstance();
+                                servicioMusica.setListaCanciones(listaCanciones, cancionInfo, mContext, pos);
 
-                            // Iniciar el fragmento con el menu para controlar la musica
-                            FragmentManager manager = activity.getSupportFragmentManager();
-                            if(activity.getClass()== Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
-                            if(activity.getClass()== Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
-                            if(activity.getClass()== Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
-                            if(activity.getClass()== ListaPersonalizada.class) manager.beginTransaction().replace(R.id.fl_reproductorLC, menuReproductor).commit();
-                            if(activity.getClass()== OpcionesLista.class) manager.beginTransaction().replace(R.id.fl_reproductorOL, menuReproductor).commit();
+                                // Iniciar el fragmento con el menu para controlar la musica
+                                FragmentManager manager = activity.getSupportFragmentManager();
+                                if(activity.getClass()== Canciones.class) manager.beginTransaction().replace(R.id.fl_reproductorC, menuReproductor).commit();
+                                if(activity.getClass()== Buscar.class) manager.beginTransaction().replace(R.id.fl_reproductorB, menuReproductor).commit();
+                                if(activity.getClass()== Listas.class) manager.beginTransaction().replace(R.id.fl_reproductorL, menuReproductor).commit();
+                                if(activity.getClass()== ListaPersonalizada.class) manager.beginTransaction().replace(R.id.fl_reproductorLC, menuReproductor).commit();
+                                if(activity.getClass()== OpcionesLista.class) manager.beginTransaction().replace(R.id.fl_reproductorOL, menuReproductor).commit();
 
-                            menuReproductor.actualizarMenu();
-                            activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));
+                                menuReproductor.actualizarMenu();
+                                activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));
+
+                            } else {
+
+                                String value= String.valueOf(cancionInfo.getListas().indexOf(nLista));
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                ref.child(userId).child("canciones")
+                                        .child("id-"+cancionInfo.getNombre())
+                                        .child("listas").child(value)
+                                        .removeValue();
+                            }
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {

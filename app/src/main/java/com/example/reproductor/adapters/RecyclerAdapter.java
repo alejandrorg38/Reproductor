@@ -50,6 +50,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private long mLastClickTime;
     public static MenuReproductor menuReproductor;
     private boolean eliminar = false;
+    private boolean eliminarFav = false;
 
     public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList) {
         this.mContext = mContext;
@@ -63,6 +64,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.mContentList = mContentList;
         this.nLista=nLista;
         this.eliminar = true;
+    }
+
+    public RecyclerAdapter(Context mContext, Activity mActivity, ArrayList<CancionInfo> mContentList, Boolean eliminarFav) {
+        this.mContext = mContext;
+        this.mActivity = mActivity;
+        this.mContentList = mContentList;
+        this.eliminarFav = eliminarFav;
     }
 
     @NonNull
@@ -130,9 +138,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         public void onDataChange(DataSnapshot snapshot) {
 
                             //Recoger todas las canciones en listas
-                            for(DataSnapshot dataSnapshot: snapshot.getChildren()){
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                                CancionInfo cancionInfo= new CancionInfo();
+                                CancionInfo cancionInfo = new CancionInfo();
                                 cancionInfo.setCancionUrl(dataSnapshot.child("cancionUrl").getValue(String.class));
                                 cancionInfo.setNombre(dataSnapshot.child("nombre").getValue(String.class));
                                 cancionInfo.setArtista(dataSnapshot.child("artista").getValue(String.class));
@@ -144,7 +152,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                             AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
-                            if (!eliminar) {
+                            if(eliminarFav){
+
+                                String value= String.valueOf(cancionInfo.getListas().indexOf(nLista));
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                ref.child(userId).child("canciones")
+                                        .child("id-"+cancionInfo.getNombre())
+                                        .child("favorita")
+                                        .setValue(false);
+
+                            } else if (eliminar) {
+
+                                String value= String.valueOf(cancionInfo.getListas().indexOf(nLista));
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                ref.child(userId).child("canciones")
+                                        .child("id-"+cancionInfo.getNombre())
+                                        .child("listas").child(value)
+                                        .removeValue();
+
+                            } else {
+
                                 // Iniciar servicio de musica
                                 ServicioMusica servicioMusica = ServicioMusica.getInstance();
                                 servicioMusica.setListaCanciones(listaCanciones, cancionInfo, mContext, pos);
@@ -159,16 +188,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                                 menuReproductor.actualizarMenu();
                                 activity.startActivity(new Intent(view.getContext().getApplicationContext(), DetallesReproductor.class));
-
-                            } else {
-
-                                String value= String.valueOf(cancionInfo.getListas().indexOf(nLista));
-
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                                ref.child(userId).child("canciones")
-                                        .child("id-"+cancionInfo.getNombre())
-                                        .child("listas").child(value)
-                                        .removeValue();
                             }
                         }
                         @Override

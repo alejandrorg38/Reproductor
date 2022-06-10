@@ -16,6 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:clickable="true"
+            android:onClick="favoritas"
             app:cardBackgroundColor="@color/background_blue3"
             app:cardCornerRadius="10dp"
             app:layout_constraintStart_toStartOf="parent"

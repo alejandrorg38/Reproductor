@@ -11,6 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reproductor">
         <activity
+            android:name=".OpcionesFavoritas"
+            android:exported="true" />
+        <activity
+            android:name=".Favoritas"
+            android:exported="true" />
+        <activity
             android:name=".OpcionesLista"
             android:exported="true" />
         <activity

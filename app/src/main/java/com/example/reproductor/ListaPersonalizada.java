@@ -49,7 +49,8 @@ public class ListaPersonalizada extends AppCompatActivity {
 
     private ImageButton ib_eliminarLC;
     private TextView tv_sinCancionesLC, tv_nListaLC;
-    String nombreLista;
+    private String nombreLista;
+    private boolean hayCanciones=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,8 @@ public class ListaPersonalizada extends AppCompatActivity {
                             }
                         }
                     }
+
+                    if(!hayCanciones) tv_sinCancionesLC.setVisibility(View.VISIBLE);
 
                     recyclerAdapter = new RecyclerAdapter(getApplicationContext(), ListaPersonalizada.this, (ArrayList<CancionInfo>) lista);
                     recyclerView.setAdapter(recyclerAdapter);

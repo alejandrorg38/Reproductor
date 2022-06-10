@@ -31,9 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class OpcionesLista extends AppCompatActivity {
-
-    private ServicioMusica servicioMusica;
+public class OpcionesFavoritas extends AppCompatActivity {
 
     private CircularProgressIndicator progressIndicator;
     private FirebaseAuth mAuth;
@@ -43,29 +41,23 @@ public class OpcionesLista extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter = null;
 
-    private ImageButton ib_eliminarOL;
-    private TextView tv_sinCancionesOL, tv_nListaOL;
-    private String nombreLista, userId;
+    private TextView tv_sinCancionesOF;
+    private boolean hayCanciones = false;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opciones_lista);
-
+        setContentView(R.layout.activity_opciones_favoritas);
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         userId = user.getUid();
 
-        Bundle bundle = getIntent().getExtras();
-        nombreLista = bundle.getString("nLista");
-        tv_nListaOL = findViewById(R.id.tv_nListaOL);
-        tv_nListaOL.setText(nombreLista);
-        tv_sinCancionesOL = findViewById(R.id.et_sinCancionesOL);
-        progressIndicator = findViewById(R.id.progress_circularOL);
-        ib_eliminarOL = findViewById(R.id.ib_eliminarOL);
+        tv_sinCancionesOF = findViewById(R.id.et_sinCancionesOF);
+        progressIndicator = findViewById(R.id.progress_circularOF);
 
         // Rellenar RecyclerView
-        recyclerView = findViewById(R.id.rv_lista_cancionesOL);
+        recyclerView = findViewById(R.id.rv_lista_cancionesOF);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
@@ -77,7 +69,7 @@ public class OpcionesLista extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 if (snapshot.exists()) {
-                    tv_sinCancionesOL.setVisibility(View.INVISIBLE);
+                    tv_sinCancionesOF.setVisibility(View.INVISIBLE);
                     listaCanciones.clear();
 
                     for (DataSnapshot dataSnapshot: snapshot.getChildren()){
@@ -89,21 +81,20 @@ public class OpcionesLista extends AppCompatActivity {
                     ArrayList<CancionInfo> lista = new ArrayList<>();
 
                     for(CancionInfo obj:listaCanciones){
-                        for(String s: obj.getListas()){
-                            if (s!=null) {
-                                if(s.equalsIgnoreCase(nombreLista)) lista.add(obj);
-                            }
-                        }
+                        if(obj.isFavorita()) lista.add(obj);
+                        hayCanciones=true;
                     }
 
-                    recyclerAdapter = new RecyclerAdapter(getApplicationContext(), OpcionesLista.this, (ArrayList<CancionInfo>) lista, nombreLista);
+                    if(!hayCanciones) tv_sinCancionesOF.setVisibility(View.VISIBLE);
+
+                        recyclerAdapter = new RecyclerAdapter(getApplicationContext(), OpcionesFavoritas.this, (ArrayList<CancionInfo>) lista, true);
                     recyclerView.setAdapter(recyclerAdapter);
                     recyclerAdapter.notifyDataSetChanged();
                     progressIndicator.setVisibility(View.GONE);
 
                 } else {
                     progressIndicator.setVisibility(View.GONE);
-                    tv_sinCancionesOL.setVisibility(View.VISIBLE);
+                    tv_sinCancionesOF.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -142,42 +133,6 @@ public class OpcionesLista extends AppCompatActivity {
                 return false;
             }
         });
-    }
-
-    public void eliminarLista(View view){
-
-        new AlertDialog.Builder(this, R.style.Base_Theme_Material3_Dark_Dialog)
-                .setTitle("Eliminar lista")
-                .setMessage("¿Esta seguro de que desea borrar esta lista? Esta accion no se podra deshacer.")
-                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userId).child("listas");
-                        Query query = ref.orderByChild("nombre").equalTo(nombreLista);
-                        ValueEventListener listener = new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot ds : dataSnapshot.getChildren()){
-
-                                    ds.getRef().removeValue();
-                                    finish();
-                                }
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError e) {
-                                Log.d("msgError", "No se ha podido eliminar de Database"+e.getMessage());
-                            }
-                        };
-                        query.addValueEventListener(listener);
-                    }
-                })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
-                })
-                .show();
     }
 
     public void onBackPressed(){

@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListaPersonalizada">
+    tools:context=".Favoritas">
 
     <TextView
-        android:id="@+id/et_sinCancionesOL"
+        android:id="@+id/et_sinCancionesF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aun no hay canciones en la lista..."
+        android:text="Aun no hay canciones en la lista...\nAñadelas en el boton superior"
         android:textSize="18dp"
         android:textStyle="bold"
         android:textColor="@color/lighter_blue"
@@ -22,42 +22,32 @@
         android:visibility="invisible"/>
 
     <TextView
-        android:id="@+id/tv_nListaOL"
+        android:id="@+id/tv_nListaF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:maxWidth="200dp"
         android:maxLines="1"
-        android:text="Nombre de la lista"
+        android:text="Canciones favoritas"
         android:textColor="@color/white"
         android:textSize="18dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/ib_eliminarOL"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:background="@null"
-        android:onClick="eliminarLista"
-        app:layout_constraintStart_toStartOf="@+id/tv_nListaOL"
-        app:layout_constraintTop_toBottomOf="@+id/tv_nListaOL"
-        app:srcCompat="@drawable/ic_eliminar" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_lista_cancionesOL"
+        android:id="@+id/rv_favoritas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/fl_reproductorOL"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/fl_reproductorF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_nListaF" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress_circularOL"
+        android:id="@+id/progress_circularF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -70,10 +60,9 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fl_reproductorOL"
+        android:id="@+id/fl_reproductorF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
         android:name="com.example.reproductor.MenuReproductor"/>
@@ -91,33 +80,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_navigation" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:text="Eliminar lista"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/ib_eliminarOL"
-        app:layout_constraintStart_toEndOf="@+id/ib_eliminarOL"
-        app:layout_constraintTop_toTopOf="@+id/ib_eliminarOL"
-        app:layout_constraintVertical_bias="0.2" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="15dp"
-        android:text="Pulsa sobre una cancion para eliminarla"
-        android:textSize="14dp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:background="@color/light_red"
+    <ImageButton
+        android:id="@+id/ib_eliminarF"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        android:onClick="opciones"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_nListaF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ib_eliminarOL" />
-
+        app:layout_constraintTop_toTopOf="@+id/tv_nListaF"
+        app:srcCompat="@drawable/ic_delete_sweep" />
 </androidx.constraintlayout.widget.ConstraintLayout>

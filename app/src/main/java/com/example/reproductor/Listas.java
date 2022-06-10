@@ -156,6 +156,11 @@ public class Listas extends AppCompatActivity {
         startActivity(new Intent(this, AnadirLista.class));
     }
 
+    public void favoritas(View view){
+        Intent i = new Intent(this, Favoritas.class);
+        startActivity(i);
+    }
+
     public void onBackPressed() {
     }
 }
